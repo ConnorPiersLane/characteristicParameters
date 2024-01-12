@@ -100,8 +100,8 @@ for ax in (ax1, ax2, ax3):
     ax.yaxis.set_minor_locator(plt.MultipleLocator(np.pi / 12))
     ax.yaxis.set_major_formatter(plt.FuncFormatter(pi_axis_plotter.multiple_formatter(2)))
     ax.set_ylabel(r"$\omega$", fontsize=12)
-    ax.tick_params(axis='both', which='major', labelsize=10)
-    ax.tick_params(axis='both', which='minor', labelsize=9)
+    ax.tick_params(axis='both', which='major', labelsize=12)
+    ax.tick_params(axis='both', which='minor', labelsize=12)
 
 
 ax3.set_xlabel(r"$\delta$, 2$\theta$", fontsize=12)
