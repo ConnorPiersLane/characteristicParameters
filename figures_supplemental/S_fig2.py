@@ -117,7 +117,7 @@ for ax in (ax1, ax2, ax3):
     ax.spines['left'].set_visible(False)
 
 
-plt.savefig('S_Fig2.tiff', format='tiff', dpi=2000)
+plt.savefig('S_Fig2.tiff', format='tiff', dpi=2000, bbox_inches='tight')
 
 plt.show()
 

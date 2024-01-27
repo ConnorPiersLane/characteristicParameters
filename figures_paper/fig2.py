@@ -32,6 +32,6 @@ ax.yaxis.set_major_formatter(plt.FuncFormatter(pi_axis_plotter.multiple_formatte
 
 plt.xlabel(r'$\delta$', fontsize=12)
 plt.ylabel(r'$\tilde{\delta}$', fontsize=12)
-plt.legend(ncol=2, loc=(0.6, 1.02))
-plt.savefig('Fig2.tiff', format='tiff', dpi=1000)
+plt.legend(ncol=2, loc=(0.05, 1.02))
+plt.savefig('Fig2.tiff', format='tiff', dpi=2000, bbox_inches='tight')
 plt.show()

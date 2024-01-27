@@ -63,42 +63,42 @@ for delta in deltas:
             strategy="rand1exp"
         )
 
-
-    def f1(stokes):
-        return calc_charparas(measured_stokes_parameters=stokes, optimization=optimization_1)
-    def f2(stokes):
-        return calc_charparas(measured_stokes_parameters=stokes, optimization=optimization_2)
-    def f3(stokes):
-        return calc_charparas(measured_stokes_parameters=stokes, optimization=optimization_3)
-    def f4(stokes):
-        return calc_charparas(measured_stokes_parameters=stokes, optimization=optimization_4)
-
-if __name__ == '__main__':
-    with concurrent.futures.ProcessPoolExecutor(max_workers=12) as executor:
-        # 1
-        measured_values = list(executor.map(f1, measured_Stokes))
-        results = [(charpar.delta_tilde, charpar.theta_tilde, charpar.omega_tilde) for charpar in measured_values]
-        with open("S_fig1_measured_values_1.pickle", "wb") as handle:
-            pickle.dump(results, handle)
-
-
-        # 2
-        measured_values = list(executor.map(f2, measured_Stokes))
-        results = [(charpar.delta_tilde, charpar.theta_tilde, charpar.omega_tilde) for charpar in measured_values]
-        with open("S_fig1_measured_values_2.pickle", "wb") as handle:
-            pickle.dump(results, handle)
-
-        # 3
-        measured_values = list(executor.map(f3, measured_Stokes))
-        results = [(charpar.delta_tilde, charpar.theta_tilde, charpar.omega_tilde) for charpar in measured_values]
-        with open("S_fig1_measured_values_3.pickle", "wb") as handle:
-            pickle.dump(results, handle)
-
-        # 4
-        measured_values = list(executor.map(f4, measured_Stokes))
-        results = [(charpar.delta_tilde, charpar.theta_tilde, charpar.omega_tilde) for charpar in measured_values]
-        with open("S_fig1_measured_values_4.pickle", "wb") as handle:
-            pickle.dump(results, handle)
+    #
+    # def f1(stokes):
+    #     return calc_charparas(measured_stokes_parameters=stokes, optimization=optimization_1)
+    # def f2(stokes):
+    #     return calc_charparas(measured_stokes_parameters=stokes, optimization=optimization_2)
+    # def f3(stokes):
+    #     return calc_charparas(measured_stokes_parameters=stokes, optimization=optimization_3)
+    # def f4(stokes):
+    #     return calc_charparas(measured_stokes_parameters=stokes, optimization=optimization_4)
+#
+# if __name__ == '__main__':
+#     with concurrent.futures.ProcessPoolExecutor(max_workers=12) as executor:
+#         # 1
+#         measured_values = list(executor.map(f1, measured_Stokes))
+#         results = [(charpar.delta_tilde, charpar.theta_tilde, charpar.omega_tilde) for charpar in measured_values]
+#         with open("S_fig1_measured_values_1_L1norm.pickle", "wb") as handle:
+#             pickle.dump(results, handle)
+#
+#
+#         # 2
+#         measured_values = list(executor.map(f2, measured_Stokes))
+#         results = [(charpar.delta_tilde, charpar.theta_tilde, charpar.omega_tilde) for charpar in measured_values]
+#         with open("S_fig1_measured_values_2_L1norm.pickle", "wb") as handle:
+#             pickle.dump(results, handle)
+#
+#         # 3
+#         measured_values = list(executor.map(f3, measured_Stokes))
+#         results = [(charpar.delta_tilde, charpar.theta_tilde, charpar.omega_tilde) for charpar in measured_values]
+#         with open("S_fig1_measured_values_3_L1norm.pickle", "wb") as handle:
+#             pickle.dump(results, handle)
+#
+#         # 4
+#         measured_values = list(executor.map(f4, measured_Stokes))
+#         results = [(charpar.delta_tilde, charpar.theta_tilde, charpar.omega_tilde) for charpar in measured_values]
+#         with open("S_fig1_measured_values_4_L1norm.pickle", "wb") as handle:
+#             pickle.dump(results, handle)
 
     with open("S_fig1_true_values.pickle", "wb") as handle:
         pickle.dump(true_values, handle)

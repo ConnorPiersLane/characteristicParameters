@@ -138,6 +138,7 @@ def generate_residual_vector_norm(phis: list[float],
         """
 
         Args:
+
             x: list with [delta, theta, omega], all in [rad]
 
         Returns: residual vector norm
@@ -153,6 +154,6 @@ def generate_residual_vector_norm(phis: list[float],
             vector.append(S_1 - S1(phi=phi, delta=delta, theta=theta, omega=omega))
             vector.append(S_2 - S2(phi=phi, delta=delta, theta=theta, omega=omega))
 
-        return np.linalg.norm(vector, ord=2)
+        return np.linalg.norm(vector, ord=1)
 
     return residual_vector_norm
