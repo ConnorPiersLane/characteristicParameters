@@ -12,6 +12,28 @@ def generate_dispersion_function_k(lambda_0, a, b) -> Callable[[float], float]:
         return numerator / denominator
     return k
 
+def generate_linear_residual_vector(measured_relative_phases: list[float],
+                                  wavelengths: list[float],
+                                  reduced_dispersion_function: Callable[[float], float]) -> Callable[[float], list[float]]:
+    if not len(measured_relative_phases) == len(wavelengths):
+        raise ValueError("For each measured relative phase, you need to provide the corresponding wavelength")
+
+    # The first wavelength will be taken as the reference wavelength
+    wave_0 = wavelengths[0]
+
+    def residual_vector(delta):
+        vector = []
+        for (delta_r, wave) in zip(measured_relative_phases, wavelengths):
+            delta_in = wave_0 / wave * reduced_dispersion_function(wave) / reduced_dispersion_function(wave_0)
+            vector.append(delta_r - R_pi(delta_in))
+
+        return vector
+
+    return residual_vector
+
+
+
+
 
 
 @dataclass(frozen=True)
