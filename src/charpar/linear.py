@@ -9,7 +9,7 @@ from scipy import optimize
 class Charparas_tilde:
     """
     Relative values of the Characteristic Parameters
-    Index R indicates that these are "relative" values
+    "Tilde" indicates that these are "relative" values
     Attributes:
         delta_tilde: [rad]
         theta_tilde: [rad]
@@ -53,34 +53,19 @@ class MeasuredStokesParameters:
         self.S_2s = S_2s
 
 
-def make_de_optimization(lb_delta: float = 0, ub_delta: float = math.pi,
-                    lb_theta: float = 0, ub_theta: float = math.pi,
-                    lb_omega: float = 0, ub_omega: float = 2 * math.pi,
-                    strategy: str = "rand1exp") -> Callable[[Callable], optimize.OptimizeResult]:
-    def de_optimization(func: Callable) -> optimize.OptimizeResult:
+def generate_linear_optimizer(
+        lb_delta: float = 0, ub_delta: float = math.pi,
+        lb_theta: float = 0, ub_theta: float = math.pi,
+        lb_omega: float = 0, ub_omega: float = 2 * math.pi,
+        strategy: str = "rand1exp") -> Callable[[Callable], optimize.OptimizeResult]:
+    def de_optimizer(func: Callable) -> optimize.OptimizeResult:
         return optimize.differential_evolution(func=func,
                                                bounds=((lb_delta, ub_delta),
                                                        (lb_theta, ub_theta),
                                                        (lb_omega, ub_omega)),
                                                strategy=strategy)
 
-    return de_optimization
-
-
-def calc_charparas(measured_stokes_parameters: MeasuredStokesParameters,
-                   optimization: Callable[[Callable], optimize.OptimizeResult] = make_de_optimization(),
-                   ) -> Charparas_tilde:
-
-    residual_norm = generate_residual_vector_norm(
-        phis=measured_stokes_parameters.phis,
-        S_1s=measured_stokes_parameters.S_1s,
-        S_2s=measured_stokes_parameters.S_2s)
-
-    result = optimization(residual_norm)
-
-    return Charparas_tilde(delta_tilde=result.x[0],
-                           theta_tilde=result.x[1],
-                           omega_tilde=result.x[2])
+    return de_optimizer
 
 
 def S1(phi, delta, theta, omega) -> float:
@@ -157,3 +142,19 @@ def generate_residual_vector_norm(phis: list[float],
         return np.linalg.norm(vector, ord=2)
 
     return residual_vector_norm
+
+
+def calc_charparas(
+        measured_stokes_parameters: MeasuredStokesParameters,
+        optimizer: Callable[[Callable], optimize.OptimizeResult] = generate_linear_optimizer(),
+) -> Charparas_tilde:
+    residual_norm = generate_residual_vector_norm(
+        phis=measured_stokes_parameters.phis,
+        S_1s=measured_stokes_parameters.S_1s,
+        S_2s=measured_stokes_parameters.S_2s)
+
+    result = optimizer(residual_norm)
+
+    return Charparas_tilde(delta_tilde=result.x[0],
+                           theta_tilde=result.x[1],
+                           omega_tilde=result.x[2])

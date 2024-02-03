@@ -19,46 +19,64 @@ l_b = 435.8
 
 k_dispersion = generate_dispersion_function_k(lambda_0=632.8, a = 25.5e3, b = 3.25e9)
 
-delta_A_r = np.arange(0.0, 6*np.pi, 0.001)
+
 
 def delta_A_g(delta_A_r: float) -> float:
       return l_r / l_g * k_dispersion(l_g) / k_dispersion(l_r) * delta_A_r
 
+
+print(f"delta_g = {round(l_r / l_g * k_dispersion(l_g) / k_dispersion(l_r), ndigits=3)} x delta_r")
+
 def delta_A_b(delta_A_r: float) -> float:
       return l_r / l_b * k_dispersion(l_b) / k_dispersion(l_r) * delta_A_r
 
-delta_A_r_actual = 9*math.pi/2
-delta_R_r_measured = R_pi(delta_A_r_actual)
-delta_R_g_measured = R_pi(delta_A_g(delta_A_r_actual))
-delta_R_b_measured = R_pi(delta_A_b(delta_A_r_actual))
+print(f"delta_b = {round(l_r / l_b * k_dispersion(l_b) / k_dispersion(l_r), ndigits=3)} x delta_r")
+delta_A_r_1 = np.arange(0*np.pi, 10*np.pi, 0.001)
+delta_R_r_1 = np.array([R_pi(d) for d in delta_A_r_1])
+delta_R_g_1 = np.array([R_pi(delta_A_g(d)) for d in delta_A_r_1])
+delta_R_b_1 = np.array([R_pi(delta_A_b(d)) for d in delta_A_r_1])
 
-delta_A_r = np.arange(0.0, 6*np.pi, 0.001)
-delta_R_r = np.array([R_pi(d) for d in delta_A_r])
-delta_R_g = np.array([R_pi(delta_A_g(d)) for d in delta_A_r])
-delta_R_b = np.array([R_pi(delta_A_b(d)) for d in delta_A_r])
+delta_A_r_2 = np.arange(10*np.pi, 20*np.pi, 0.001)
+delta_R_r_2 = np.array([R_pi(d) for d in delta_A_r_2])
+delta_R_g_2 = np.array([R_pi(delta_A_g(d)) for d in delta_A_r_2])
+delta_R_b_2 = np.array([R_pi(delta_A_b(d)) for d in delta_A_r_2])
 
-plt.plot(delta_A_r, delta_R_r, color="red", label=r"$\tilde{\delta}_r=R_{\pi}(\delta_r)$")
-plt.plot(delta_A_r, delta_R_g, color="green", label=r"$\tilde{\delta}_g=R_{\pi}(\delta_g)$")
-plt.plot(delta_A_r, delta_R_b, color="blue", label=r"$\tilde{\delta}_b=R_{\pi}(\delta_b)$")
+fig, (ax1, ax2) = plt.subplots(2,1, sharex=False, figsize = (6,2.5))
 
-ax = plt.gca()
-ax.grid(True)
-ax.set_aspect(1.0)
-ax.axhline(0, color='black', lw=2)
-ax.axvline(0, color='black', lw=2)
-ax.xaxis.set_major_locator(plt.MultipleLocator(np.pi / 2))
-ax.xaxis.set_minor_locator(plt.MultipleLocator(np.pi / 12))
-ax.xaxis.set_major_formatter(plt.FuncFormatter(pi_axis_plotter.multiple_formatter(2)))
+ax1.plot(delta_A_r_1, delta_R_r_1, color="red", label=r"$\tilde{\delta}_r=R_{\pi}(\delta_r)$")
+ax1.plot(delta_A_r_1, delta_R_g_1, color="green", label=r"$\tilde{\delta}_g=R_{\pi}(\delta_g)$")
+ax1.plot(delta_A_r_1, delta_R_b_1, color="blue", label=r"$\tilde{\delta}_b=R_{\pi}(\delta_b)$")
 
-ax.yaxis.set_major_locator(plt.MultipleLocator(np.pi / 2))
-ax.yaxis.set_minor_locator(plt.MultipleLocator(np.pi / 12))
-ax.yaxis.set_major_formatter(plt.FuncFormatter(pi_axis_plotter.multiple_formatter(2)))
+ax2.plot(delta_A_r_2, delta_R_r_2, color="red", )
+ax2.plot(delta_A_r_2, delta_R_g_2, color="green", )
+ax2.plot(delta_A_r_2, delta_R_b_2, color="blue", )
 
-ax.legend()
+for ax in (ax1, ax2):
+      ax.grid(True)
+      ax.set_aspect(1.0)
+      ax.xaxis.set_major_locator(plt.MultipleLocator(np.pi))
+      ax.xaxis.set_minor_locator(plt.MultipleLocator(np.pi/2))
+      ax.xaxis.set_major_formatter(plt.FuncFormatter(pi_axis_plotter.multiple_formatter(2)))
 
-plt.xlabel(r'$\delta_r$', fontsize=12)
-plt.ylabel(r'$\tilde{\delta}$', fontsize=12)
-plt.legend( ncol=3, loc=(0.05, 1.02))
-plt.savefig('Fig4.tiff', format='tiff', dpi=2000, bbox_inches='tight')
+      ax.yaxis.set_major_locator(plt.MultipleLocator(np.pi / 2))
+      ax.yaxis.set_minor_locator(plt.MultipleLocator(np.pi / 6))
+      ax.yaxis.set_major_formatter(plt.FuncFormatter(pi_axis_plotter.multiple_formatter(2)))
+      ax.set_ylabel(r'$\tilde{\delta}$', fontsize=12)
+      ax.set_xlabel(r'$\delta_r$', fontsize=12)
+
+#
+# ax1.plot([6*math.pi, 6*math.pi], [0, math.pi], color="black", linestyle='solid', linewidth=1.5)
+# # ax2.plot([12*math.pi, 12*math.pi], [0, math.pi], color="black", linestyle='dotted', linewidth=1.5)
+# # ax2.plot([18*math.pi, 18*math.pi], [0, math.pi], color="black", linestyle='dotted', linewidth=1.5)
+# ax2.plot([20*math.pi, 20*math.pi], [0, math.pi], color="black", linestyle='solid', linewidth=1.5)
+
+ax1.legend()
+
+
+
+ax1.legend( ncol=3, loc=(0.05, 1.02), fontsize=10)
+
+plt.subplots_adjust(wspace=0, hspace=0)
+plt.savefig('Fig5.tiff', format='tiff', dpi=2000, bbox_inches='tight')
 
 plt.show()

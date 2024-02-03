@@ -1,7 +1,9 @@
-from dataclasses import dataclass
+import math
 from typing import Callable
 
-from charpar.circular import R_pi_2
+import numpy as np
+from scipy import optimize
+
 from charpar.linear import R_pi
 
 
@@ -10,80 +12,42 @@ def generate_dispersion_function_k(lambda_0, a, b) -> Callable[[float], float]:
         numerator = 1 + a / (lambda_x ** 2) + b / (lambda_x ** 4)
         denominator = 1 + a / (lambda_0 ** 2) + b / (lambda_0 ** 4)
         return numerator / denominator
+
     return k
 
-def generate_linear_residual_vector(measured_relative_phases: list[float],
-                                  wavelengths: list[float],
-                                  reduced_dispersion_function: Callable[[float], float]) -> Callable[[float], list[float]]:
+
+def generate_linear_residual_vector_norm(
+        measured_relative_phases: list[float],
+        wavelengths: list[float],
+        reduced_dispersion_function: Callable[[float], float]) -> Callable[[float], float]:
+
     if not len(measured_relative_phases) == len(wavelengths):
         raise ValueError("For each measured relative phase, you need to provide the corresponding wavelength")
 
-    # The first wavelength will be taken as the reference wavelength
-    wave_0 = wavelengths[0]
+    wave_0 = wavelengths[0]  # The first wavelength will be taken as the reference wavelength
 
-    def residual_vector(delta):
+    def residual_vector_norm(delta):
         vector = []
         for (delta_r, wave) in zip(measured_relative_phases, wavelengths):
-            delta_in = wave_0 / wave * reduced_dispersion_function(wave) / reduced_dispersion_function(wave_0)
+            delta_in = wave_0 / wave * reduced_dispersion_function(wave) / reduced_dispersion_function(wave_0) * delta
             vector.append(delta_r - R_pi(delta_in))
-
-        return vector
-
-    return residual_vector
+        return np.linalg.norm(vector, ord=2)
+    return residual_vector_norm
 
 
+def generate_rgb_optimizer(lb_delta: float = 0, ub_delta: float = 50 * math.pi, strategy: str = "rand1exp") -> Callable[
+    [Callable], optimize.OptimizeResult]:
+    def de_optimizer(func: Callable) -> optimize.OptimizeResult:
+        return optimize.differential_evolution(func=func,
+                                               bounds=[(lb_delta, ub_delta)],
+                                               strategy=strategy)
+    return de_optimizer
 
 
-
-
-@dataclass(frozen=True)
-class OneRelativeMeasurement:
-    """
-    Attributes:
-        wavelength: [m] wavelength of the corresponding measurement
-        measured_relative_phase_difference: [rad] 0-pi (linearly polarized incident light) or 0-pi/2 (circularly ...)
-        dispersion_k: [] dispersion of birefringence in the reduced form with
-                        k(lambda) = Delta n(lambda) / Delta n(lambda_ref)
-        type_of_incident_polarized_light: "linear" or "circular"
-    """
-    wavelength: float
-    measured_relative_phase_difference: float
-    dispersion_k: float
-
-
-
-
-def _get_relative_function(type) -> Callable[[float], float]:
-    if type == "linear":
-        return R_pi
-    elif type == "circular":
-        return R_pi_2
-    else:
-        raise NotImplementedError(
-            f"This method is only implemented for type==linear and type==circular. Buty type={type}")
-
-
-def _generate_residual_vector_norm(measurements: list[OneRelativeMeasurement],
-                                relative_function: Callable[[float], float]) -> Callable[[float], float]:
-
-    def residual_vector_norm(x) -> float:
-        # First entry will be the reference
-        lambda_r = measurements[0].wavelength
-
-
-        vector = []
-        pass
-
-def calc_absolute_phase_differences(measurements: list[OneRelativeMeasurement], type="linear") -> list[float]:
-    """
-
-    Args:
-        measurements (list[OneRelativeMeasurement]):
-        type (str): "linear" or "circular" depending on which polarized incident light was used
-
-    Returns:
-
-    """
-    R = _get_relative_function(type)
-
-    residual_vector = []
+def calc_absolute_phase_differences(measured_relative_phases: list[float],
+                                    wavelengths: list[float],
+                                    reduced_dispersion_function: Callable[[float], float],
+                                    ):
+    residual_vector_norm = generate_linear_residual_vector_norm(measured_relative_phases=measured_relative_phases,
+                                                                wavelengths=wavelengths,
+                                                                reduced_dispersion_function=reduced_dispersion_function)

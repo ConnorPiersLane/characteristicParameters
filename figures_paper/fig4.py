@@ -1,60 +1,110 @@
 import math
-import numpy as np
+import pickle
 import matplotlib.pyplot as plt
-import pi_axis_plotter
-from charpar.linear import R_pi
-from charpar.rgb import generate_dispersion_function_k
+import numpy as np
 
-rc = {"font.family" : "serif",
-      "mathtext.fontset" : "stix"}
+import pi_axis_plotter
+
+rc = {"font.family": "serif",
+      "mathtext.fontset": "stix"}
 plt.rcParams.update(rc)
 plt.rcParams["font.serif"] = ["Times New Roman"] + plt.rcParams["font.serif"]
 
-# CIE RGB color space
+with open('measured_values_fig3.pickle', 'rb') as handle:
+    measured_values = pickle.load(handle)
 
-l_r = 700
-l_g = 546.1
-l_b = 435.8
+with open('true_values_fig3.pickle', 'rb') as handle:
+    true_values = pickle.load(handle)
+
+X_delta = []
+Y_delta = []
+
+X_theta = []
+Y_theta = []
+X_theta_tildeed = []
+Y_theta_tildeed = []
+
+X_omega = []
+Y_omega = []
+X_omega_tildeed = []
+Y_omega_tildeed = []
+
+delta = []
+delta_U = []
+delta_V = []
+theta_U = []
+theta_V = []
+theta_U_tildeed = []
+theta_V_tildeed = []
+omega_U = []
+omega_V = []
+omega_U_tildeed= []
+omega_V_tildeed = []
 
 
-k_dispersion = generate_dispersion_function_k(lambda_0=632.8, a = 25.5e3, b = 3.25e9)
+for (charpara, true_value) in zip(measured_values, true_values):
+    value = true_value
+    # Delta
+    X_delta.append(value[0])
+    Y_delta.append(value[2])
+    delta.append(charpara.delta_tilde)
+    delta_U.append(math.cos(charpara.delta_tilde))
+    delta_V.append(math.sin(charpara.delta_tilde))
 
-delta_A_r = np.arange(0.0, 6*np.pi, 0.001)
+    # Theta
+    theta_tilde = charpara.theta_tilde % (math.pi / 2)
+    if math.isclose(true_value[0], 0) or math.isclose(true_value[0], math.pi) or math.isclose(true_value[0], 2*math.pi):
+        X_theta_tildeed.append(value[0])
+        Y_theta_tildeed.append(value[2])
+        theta_U_tildeed.append(math.cos(theta_tilde))
+        theta_V_tildeed.append(math.sin(theta_tilde))
+    else:
+        X_theta.append(value[0])
+        Y_theta.append(value[2])
+        theta_U.append(math.cos(theta_tilde))
+        theta_V.append(math.sin(theta_tilde))
 
-def delta_A_g(delta_A_r: float) -> float:
-      return l_r / l_g * k_dispersion(l_g) / k_dispersion(l_r) * delta_A_r
+    # Omega
+    omega_i = charpara.omega_tilde % math.pi
+    if math.isclose(omega_i, math.pi):
+        omega_i = 0
+    if math.isclose(true_value[0], math.pi):
+        X_omega_tildeed.append(value[0])
+        Y_omega_tildeed.append(value[2])
+        omega_U_tildeed.append(math.cos(omega_i))
+        omega_V_tildeed.append(math.sin(omega_i))
+    else:
+        X_omega.append(value[0])
+        Y_omega.append(value[2])
+        omega_U.append(math.cos(omega_i))
+        omega_V.append(math.sin(omega_i))
 
-def delta_A_b(delta_A_r: float) -> float:
-      return l_r / l_b * k_dispersion(l_b) / k_dispersion(l_r) * delta_A_r
+
+fig, (ax1, ax2, ax3) = plt.subplots(3,1, sharex=True)
+
+ax1.quiver(X_delta, Y_delta, delta_U, delta_V, color="k", pivot="mid", width=0.006, scale=20, headlength=3,headaxislength=3)
+
+ax2.quiver(X_theta, Y_theta, theta_U, theta_V, color="k", pivot="mid", width=0.006, scale=20, headlength=3,headaxislength=3)
+ax2.quiver(X_theta_tildeed, Y_theta_tildeed, theta_U_tildeed, theta_V_tildeed, color='red', pivot="mid", width=0.007, scale=20, headlength=3, headaxislength=3)
+
+ax3.quiver(X_omega, Y_omega, omega_U, omega_V, color="k", pivot="mid", width=0.006, scale=20, headlength=3,headaxislength=3)
+ax3.quiver(X_omega_tildeed, Y_omega_tildeed, omega_U_tildeed, omega_V_tildeed, color='red', pivot="mid", width=0.007, scale=20, headlength=3, headaxislength=3)
+
+for ax in (ax1, ax2, ax3):
+    ax.set_aspect(1.0)
+    ax.xaxis.set_major_locator(plt.MultipleLocator(np.pi / 2))
+    ax.xaxis.set_minor_locator(plt.MultipleLocator(np.pi / 12))
+    ax.xaxis.set_major_formatter(plt.FuncFormatter(pi_axis_plotter.multiple_formatter(2)))
+
+    ax.yaxis.set_major_locator(plt.MultipleLocator(np.pi / 2))
+    ax.yaxis.set_minor_locator(plt.MultipleLocator(np.pi / 12))
+    ax.yaxis.set_major_formatter(plt.FuncFormatter(pi_axis_plotter.multiple_formatter(2)))
+    ax.set_ylabel(r"$\omega$", fontsize=12)
+    ax.tick_params(axis='both', which='major', labelsize=12)
+    ax.tick_params(axis='both', which='minor', labelsize=12)
 
 
-delta_A_r = np.arange(0.0, 6*np.pi, 0.001)
-delta_R_r = np.array([R_pi(d) for d in delta_A_r])
-delta_R_g = np.array([R_pi(delta_A_g(d)) for d in delta_A_r])
-delta_R_b = np.array([R_pi(delta_A_b(d)) for d in delta_A_r])
+ax3.set_xlabel(r"$\delta$, 2$\theta$", fontsize=12)
 
-plt.plot(delta_A_r, delta_R_r, color="red", label=r"$\tilde{\delta}_r=R_{\pi}(\delta_r)$")
-plt.plot(delta_A_r, delta_R_g, color="green", label=r"$\tilde{\delta}_g=R_{\pi}(\delta_g)$")
-plt.plot(delta_A_r, delta_R_b, color="blue", label=r"$\tilde{\delta}_b=R_{\pi}(\delta_b)$")
-
-ax = plt.gca()
-ax.grid(True)
-ax.set_aspect(1.0)
-ax.axhline(0, color='black', lw=2)
-ax.axvline(0, color='black', lw=2)
-ax.xaxis.set_major_locator(plt.MultipleLocator(np.pi / 2))
-ax.xaxis.set_minor_locator(plt.MultipleLocator(np.pi / 12))
-ax.xaxis.set_major_formatter(plt.FuncFormatter(pi_axis_plotter.multiple_formatter(2)))
-
-ax.yaxis.set_major_locator(plt.MultipleLocator(np.pi / 2))
-ax.yaxis.set_minor_locator(plt.MultipleLocator(np.pi / 12))
-ax.yaxis.set_major_formatter(plt.FuncFormatter(pi_axis_plotter.multiple_formatter(2)))
-
-ax.legend()
-
-plt.xlabel(r'$\delta_r$', fontsize=12)
-plt.ylabel(r'$\tilde{\delta}$', fontsize=12)
-plt.legend( ncol=3, loc=(0.05, 1.02))
-plt.savefig('Fig4.tiff', format='tiff', dpi=2000, bbox_inches='tight')
-
+plt.savefig('Fig4.tiff', format='tiff', dpi=2000)
 plt.show()
