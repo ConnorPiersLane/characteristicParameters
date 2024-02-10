@@ -104,10 +104,10 @@ def S2(phi, delta, theta, omega) -> float:
                   math.sin(B) * (1 - math.cos(delta)))
 
 
-def generate_residual_vector_norm(phis: list[float],
-                                  S_1s: list[float],
-                                  S_2s: list[float]
-                                  ) -> Callable[[list], float]:
+def generate_penalty_function_P(phis: list[float],
+                                S_1s: list[float],
+                                S_2s: list[float]
+                                ) -> Callable[[list], float]:
     """
 
     Args:
@@ -119,7 +119,7 @@ def generate_residual_vector_norm(phis: list[float],
 
     """
 
-    def residual_vector_norm(x) -> float:
+    def penalty_function_P(x) -> float:
         """
 
         Args:
@@ -141,14 +141,14 @@ def generate_residual_vector_norm(phis: list[float],
 
         return np.linalg.norm(vector, ord=2)
 
-    return residual_vector_norm
+    return penalty_function_P
 
 
 def calc_charparas(
         measured_stokes_parameters: MeasuredStokesParameters,
         optimizer: Callable[[Callable], optimize.OptimizeResult] = generate_linear_optimizer(),
 ) -> Charparas_tilde:
-    residual_norm = generate_residual_vector_norm(
+    residual_norm = generate_penalty_function_P(
         phis=measured_stokes_parameters.phis,
         S_1s=measured_stokes_parameters.S_1s,
         S_2s=measured_stokes_parameters.S_2s)

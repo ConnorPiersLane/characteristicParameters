@@ -1,3 +1,5 @@
+import math
+
 import numpy as np
 import matplotlib.pyplot as plt
 import pi_axis_plotter
@@ -19,8 +21,6 @@ delta_R_circ = np.array([R_pi_2(d) for d in delta])
 fig, ax = plt.subplots()
 ax.grid(True)
 ax.set_aspect(1.0)
-ax.axhline(0, color='black', lw=2)
-ax.axvline(0, color='black', lw=2)
 
 ax.plot(delta, delta_R_linear, label=r'$R_{\pi}(\delta)$', linewidth=2)
 ax.plot(delta, delta_R_circ, label=r'$R_{\pi/2}(\delta)$', linestyle="dashed", linewidth=2)
@@ -32,6 +32,10 @@ ax.xaxis.set_major_formatter(plt.FuncFormatter(pi_axis_plotter.multiple_formatte
 ax.yaxis.set_major_locator(plt.MultipleLocator(np.pi / 2))
 ax.yaxis.set_minor_locator(plt.MultipleLocator(np.pi / 12))
 ax.yaxis.set_major_formatter(plt.FuncFormatter(pi_axis_plotter.multiple_formatter(2)))
+ax.set_ylim([0, math.pi])
+ax.set_xlim([0, 2 * math.pi])
+
+
 plt.xticks(size = 20)
 plt.yticks(size = 20)
 plt.xlabel(r'$\delta$', fontsize=20)
