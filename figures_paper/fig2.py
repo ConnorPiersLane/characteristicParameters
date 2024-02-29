@@ -12,7 +12,7 @@ rc = {"font.family": "serif",
 plt.rcParams.update(rc)
 plt.rcParams["font.serif"] = ["Times New Roman"] + plt.rcParams["font.serif"]
 
-delta = np.arange(0, 2 * np.pi, 0.001)
+delta = np.arange(0, 4 * np.pi, 0.001)
 delta_R_linear = np.array([R_pi(d) for d in delta])
 delta_R_circ = np.array([R_pi_2(d) for d in delta])
 
@@ -22,8 +22,8 @@ fig, ax = plt.subplots()
 ax.grid(True)
 ax.set_aspect(1.0)
 
-ax.plot(delta, delta_R_linear, label=r'$R_{\pi}(\delta)$', linewidth=2)
-ax.plot(delta, delta_R_circ, label=r'$R_{\pi/2}(\delta)$', linestyle="dashed", linewidth=2)
+ax.plot(delta, delta_R_linear, label=r'$T_{\pi}(\delta)$', linewidth=2)
+ax.plot(delta, delta_R_circ, label=r'$T_{\pi/2}(\delta)$', linestyle="dashed", linewidth=2)
 
 ax.xaxis.set_major_locator(plt.MultipleLocator(np.pi / 2))
 ax.xaxis.set_minor_locator(plt.MultipleLocator(np.pi / 12))
@@ -33,7 +33,7 @@ ax.yaxis.set_major_locator(plt.MultipleLocator(np.pi / 2))
 ax.yaxis.set_minor_locator(plt.MultipleLocator(np.pi / 12))
 ax.yaxis.set_major_formatter(plt.FuncFormatter(pi_axis_plotter.multiple_formatter(2)))
 ax.set_ylim([0, math.pi])
-ax.set_xlim([0, 2 * math.pi])
+ax.set_xlim([0, 4 * math.pi])
 
 
 plt.xticks(size = 20)

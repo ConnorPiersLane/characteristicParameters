@@ -168,13 +168,13 @@ for rows in axes:
     #     cbar.set_label(r"$1-\frac{\lg\Delta_{\omega}}{\lg\epsilon}$", fontsize=14)
     if i == 1:
         cbar = fig.colorbar(img11, cax=cax, orientation='vertical', ticks=[0, 127, 255])
-        cbar.set_label(r"$\Delta E_\delta$", fontsize=12)
+        cbar.set_label(r"$\Delta D_\delta$", fontsize=12)
     elif i == 2:
         cbar = fig.colorbar(img21, cax=cax, orientation='vertical', ticks=[0, 127, 255])
-        cbar.set_label(r"$\Delta E_\omega$", fontsize=12)
+        cbar.set_label(r"$\Delta D_\omega$", fontsize=12)
     elif i == 3:
         cbar = fig.colorbar(img31, cax=cax, orientation='vertical', ticks=[0, 127, 255])
-        cbar.set_label(r"$\Delta E_\epsilon$", fontsize=12)
+        cbar.set_label(r"$\Delta D_\epsilon$", fontsize=12)
 
     cbar.ax.invert_yaxis()
     cbar.ax.set_yticklabels(['1<', '0.5', '0'], fontsize=12)

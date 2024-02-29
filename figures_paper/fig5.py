@@ -27,12 +27,12 @@ def delta_A_g(delta_A_r: float) -> float:
       return l_r / l_g * k_dispersion(l_g) / k_dispersion(l_r) * delta_A_r
 
 
-print(f"delta_g = {round(l_r / l_g * k_dispersion(l_g) / k_dispersion(l_r), ndigits=2)} x delta_r")
+print(f"delta_g = {round(l_r / l_g * k_dispersion(l_g) / k_dispersion(l_r), ndigits=4)} x delta_r")
 
 def delta_A_b(delta_A_r: float) -> float:
       return l_r / l_b * k_dispersion(l_b) / k_dispersion(l_r) * delta_A_r
 
-print(f"delta_b = {round(l_r / l_b * k_dispersion(l_b) / k_dispersion(l_r), ndigits=2)} x delta_r")
+print(f"delta_b = {round(l_r / l_b * k_dispersion(l_b) / k_dispersion(l_r), ndigits=4)} x delta_r")
 delta_A_r_1 = np.arange(0*np.pi, 10*np.pi, 0.001)
 delta_R_r_1 = np.array([R_pi(d) for d in delta_A_r_1])
 delta_R_g_1 = np.array([R_pi(delta_A_g(d)) for d in delta_A_r_1])
@@ -57,9 +57,9 @@ delta_R_b_3 = np.array([R_pi(delta_A_b(d)) for d in delta_A_r_3])
 
 fig, (ax1, ax2, ax3) = plt.subplots(3,1, sharex=False, figsize = (6,3))
 
-ax1.plot(delta_A_r_1, delta_R_r_1, color="red", label=r"$\tilde{\delta}_r=R_{\pi}(\delta_r)$")
-ax1.plot(delta_A_r_1, delta_R_g_1, color="green", label=r"$\tilde{\delta}_g=R_{\pi}(\delta_g)$")
-ax1.plot(delta_A_r_1, delta_R_b_1, color="blue", label=r"$\tilde{\delta}_b=R_{\pi}(\delta_b)$")
+ax1.plot(delta_A_r_1, delta_R_r_1, color="red", label=r"$\tilde{\delta}_r=T_{\pi}(\delta_r)$")
+ax1.plot(delta_A_r_1, delta_R_g_1, color="green", label=r"$\tilde{\delta}_g=T_{\pi}(\delta_g)$")
+ax1.plot(delta_A_r_1, delta_R_b_1, color="blue", label=r"$\tilde{\delta}_b=T_{\pi}(\delta_b)$")
 ax1.set_xlim([0 * math.pi, 10 * math.pi])
 
 ax2.plot(delta_A_r_2, delta_R_r_2, color="red", )

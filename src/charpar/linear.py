@@ -31,11 +31,17 @@ def R_pi(delta: float) -> float:
     Returns: [rad] 0-pi relative phase difference
 
     """
-    if delta % (2 * math.pi) < math.pi:
-        return delta % math.pi
-    else:
-        return math.pi - (delta % math.pi)
 
+    return abs(((delta-math.pi) % (2*math.pi))-math.pi)
+
+    ## Alternative 1:
+    # if delta % (2 * math.pi) < math.pi:
+    #     return delta % math.pi
+    # else:
+    #     return math.pi - (delta % math.pi)
+
+    ## Alternative 2:
+    # return math.pi/2 + math.asin(math.sin(delta-math.pi/2))
 
 class MeasuredStokesParameters:
     def __init__(self, phis: list[float], S_1s: list[float], S_2s: list[float]):
@@ -104,7 +110,7 @@ def S2(phi, delta, theta, omega) -> float:
                   math.sin(B) * (1 - math.cos(delta)))
 
 
-def generate_penalty_function_P(phis: list[float],
+def generate_residual_function_R(phis: list[float],
                                 S_1s: list[float],
                                 S_2s: list[float]
                                 ) -> Callable[[list], float]:
@@ -119,7 +125,7 @@ def generate_penalty_function_P(phis: list[float],
 
     """
 
-    def penalty_function_P(x) -> float:
+    def residual_function_R(x) -> float:
         """
 
         Args:
@@ -133,22 +139,22 @@ def generate_penalty_function_P(phis: list[float],
         theta = x[1]
         omega = x[2]
 
-        vector = []
+        residual_vector = []
 
         for (phi, S_1, S_2) in zip(phis, S_1s, S_2s):
-            vector.append(S_1 - S1(phi=phi, delta=delta, theta=theta, omega=omega))
-            vector.append(S_2 - S2(phi=phi, delta=delta, theta=theta, omega=omega))
+            residual_vector.append(S_1 - S1(phi=phi, delta=delta, theta=theta, omega=omega))
+            residual_vector.append(S_2 - S2(phi=phi, delta=delta, theta=theta, omega=omega))
 
-        return np.linalg.norm(vector, ord=2)
+        return np.linalg.norm(residual_vector, ord=2)
 
-    return penalty_function_P
+    return residual_function_R
 
 
 def calc_charparas(
         measured_stokes_parameters: MeasuredStokesParameters,
         optimizer: Callable[[Callable], optimize.OptimizeResult] = generate_linear_optimizer(),
 ) -> Charparas_tilde:
-    residual_norm = generate_penalty_function_P(
+    residual_norm = generate_residual_function_R(
         phis=measured_stokes_parameters.phis,
         S_1s=measured_stokes_parameters.S_1s,
         S_2s=measured_stokes_parameters.S_2s)

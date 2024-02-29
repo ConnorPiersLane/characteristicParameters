@@ -146,13 +146,13 @@ for ax in (ax1, ax2, ax3):
 
     if i == 1:
         cbar = fig.colorbar(img1, cax=cax, orientation='vertical', ticks=[0, 127, 255])
-        cbar.set_label(r"$\Delta E_\delta$", fontsize=12)
+        cbar.set_label(r"$\Delta D_\delta$", fontsize=12)
     elif i == 2:
         cbar = fig.colorbar(img2, cax=cax, orientation='vertical', ticks=[0, 127, 255])
-        cbar.set_label(r"$\Delta E_\omega$", fontsize=12)
+        cbar.set_label(r"$\Delta D_\omega$", fontsize=12)
     elif i == 3:
         cbar = fig.colorbar(img3, cax=cax, orientation='vertical', ticks=[0, 127, 255])
-        cbar.set_label(r"$\Delta E_\epsilon$", fontsize=12)
+        cbar.set_label(r"$\Delta D_\epsilon$", fontsize=12)
 
     cbar.ax.invert_yaxis()
     cbar.ax.set_yticklabels(['1<', '0.5', '0'])
