@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pi_axis_plotter
 from opeqmo.triangle_wave_functions import T_pi
-from opeqmo.rgb import generate_dispersion_function_k
+from opeqmo.rgb_method import define_dispersion_function_k
 
 rc = {"font.family" : "serif",
       "mathtext.fontset" : "stix"}
@@ -19,7 +19,7 @@ l_b = 435.8
 # l_g = 545
 # l_b = 435
 
-k_dispersion = generate_dispersion_function_k(lambda_0=632.8, a = 25.5e3, b = 3.25e9)
+k_dispersion = define_dispersion_function_k(lambda_0=632.8, a = 25.5e3, b = 3.25e9)
 
 
 

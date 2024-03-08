@@ -4,7 +4,7 @@ import numpy as np
 import concurrent.futures
 
 from opeqmo.mueller_calculus import linearly_polarized_light, optical_equivalent_model
-from opeqmo.linear import MeasuredStokesParameters, calc_charparas
+from opeqmo.measurement_procedure import MeasuredStokesParameters, calculate_characteristic_parameters
 
 stepsize = math.radians(30)
 deltas = np.arange(0, 2 * math.pi + stepsize / 2, stepsize)  # x-axis
@@ -38,7 +38,7 @@ for delta in deltas:
 
 if __name__ == '__main__':
     with concurrent.futures.ProcessPoolExecutor(max_workers=12) as executor:
-        measured_values = list(executor.map(calc_charparas, measured_Stokes))
+        measured_values = list(executor.map(calculate_characteristic_parameters, measured_Stokes))
 
     with open("measured_values_fig3.pickle", "wb") as handle:
         pickle.dump(measured_values, handle)

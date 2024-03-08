@@ -5,7 +5,7 @@ import numpy as np
 import concurrent.futures
 
 from opeqmo.mueller_calculus import linearly_polarized_light, optical_equivalent_model
-from opeqmo.linear import MeasuredStokesParameters, calc_charparas
+from opeqmo.measurement_procedure import MeasuredStokesParameters, calculate_characteristic_parameters
 
 
 
@@ -41,7 +41,7 @@ for delta in deltas:
 
 if __name__ == '__main__':
     with concurrent.futures.ProcessPoolExecutor(max_workers=10) as executor:
-        measured_values = list(executor.map(calc_charparas, measured_Stokes))
+        measured_values = list(executor.map(calculate_characteristic_parameters, measured_Stokes))
 
 
 

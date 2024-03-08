@@ -1,14 +1,28 @@
 import math
 import statistics
 from typing import Callable
-
 import numpy as np
 from scipy import optimize
 
-from opeqmo.linear import R_pi
+from opeqmo.triangle_wave_functions import T_pi
 
+"""
+Important:
+Most of these functions refer to the RGB method described in section 2.6 of my paper.
+I recommend using the paper as a reference.
+"""
 
-def generate_dispersion_function_k(lambda_0, a, b) -> Callable[[float], float]:
+def define_dispersion_function_k(lambda_0, a, b) -> Callable[[float], float]:
+    """
+    Defines the dispersion function k(lambda)
+    Args:
+        lambda_0:
+        a:
+        b:
+
+    Returns:
+
+    """
     def k(lambda_x: float) -> float:
         numerator = 1 + a / (lambda_x ** 2) + b / (lambda_x ** 4)
         denominator = 1 + a / (lambda_0 ** 2) + b / (lambda_0 ** 4)
@@ -31,7 +45,7 @@ def generate_error_function_E(
         vector = []
         for (delta_r, wave) in zip(measured_relative_phases, wavelengths):
             delta_in = wave_0 / wave * reduced_dispersion_function(wave) / reduced_dispersion_function(wave_0) * delta
-            vector.append(delta_r - R_pi(delta_in))
+            vector.append(delta_r - T_pi(delta_in))
         return np.linalg.norm(vector, ord=2)
     return error_function_E
 

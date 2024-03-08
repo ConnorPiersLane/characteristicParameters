@@ -22,7 +22,6 @@ def right_hand_circularly_polarized_light() -> np.ndarray:
     return np.array([1, 0, 0, 1])
 
 
-
 def rotator(omega: float) -> np.ndarray:
     """
     Generates a Mueller Rotation Matrix with:
@@ -83,6 +82,6 @@ def optical_equivalent_model(delta: float, theta: float, omega: float) -> np.nda
     Returns: 4x4 Mueller matrix X(delta, theta) * R(omega)
 
     """
-    R = rotator(omega)
-    X = linear_retarder(delta=delta, theta=theta)
-    return np.matmul(X, R)
+    r = rotator(omega)
+    x = linear_retarder(delta=delta, theta=theta)
+    return np.matmul(x, r)

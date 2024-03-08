@@ -5,7 +5,7 @@ import numpy as np
 import concurrent.futures
 
 from opeqmo.mueller_calculus import linearly_polarized_light, optical_equivalent_model
-from opeqmo.linear import MeasuredStokesParameters, calc_charparas, generate_differential_evolution_optimizer
+from opeqmo.measurement_procedure import MeasuredStokesParameters, calculate_characteristic_parameters, define_function_that_finds_minimum_of_R_function
 
 stepsize = math.radians(1)
 omegas = np.arange(0, math.pi + stepsize / 2, stepsize)
@@ -35,28 +35,28 @@ for delta in deltas:
 
         measured_Stokes.append(measured)
 
-        optimization_1 = generate_differential_evolution_optimizer(
+        optimization_1 = define_function_that_finds_minimum_of_R_function(
             lb_delta=0, ub_delta=math.pi,
             lb_theta=0, ub_theta=math.pi / 2,
             lb_omega=0, ub_omega=math.pi,
             strategy="best1bin"
         )
 
-        optimization_2 = generate_differential_evolution_optimizer(
+        optimization_2 = define_function_that_finds_minimum_of_R_function(
             lb_delta=0, ub_delta=math.pi,
             lb_theta=0, ub_theta=math.pi,
             lb_omega=0, ub_omega=2 * math.pi,
             strategy="best1bin"
         )
 
-        optimization_3 = generate_differential_evolution_optimizer(
+        optimization_3 = define_function_that_finds_minimum_of_R_function(
             lb_delta=0, ub_delta=math.pi,
             lb_theta=0, ub_theta=math.pi / 2,
             lb_omega=0, ub_omega=math.pi,
             strategy="rand1exp"
         )
 
-        optimization_4 = generate_differential_evolution_optimizer(
+        optimization_4 = define_function_that_finds_minimum_of_R_function(
             lb_delta=0, ub_delta=math.pi,
             lb_theta=0, ub_theta=math.pi,
             lb_omega=0, ub_omega=2 * math.pi,
@@ -65,13 +65,13 @@ for delta in deltas:
 
 
     def f1(stokes):
-        return calc_charparas(measured_stokes_parameters=stokes, optimizer=optimization_1)
+        return calculate_characteristic_parameters(measured_stokes_parameters=stokes, optimizer=optimization_1)
     def f2(stokes):
-        return calc_charparas(measured_stokes_parameters=stokes, optimizer=optimization_2)
+        return calculate_characteristic_parameters(measured_stokes_parameters=stokes, optimizer=optimization_2)
     def f3(stokes):
-        return calc_charparas(measured_stokes_parameters=stokes, optimizer=optimization_3)
+        return calculate_characteristic_parameters(measured_stokes_parameters=stokes, optimizer=optimization_3)
     def f4(stokes):
-        return calc_charparas(measured_stokes_parameters=stokes, optimizer=optimization_4)
+        return calculate_characteristic_parameters(measured_stokes_parameters=stokes, optimizer=optimization_4)
 
 if __name__ == '__main__':
     with concurrent.futures.ProcessPoolExecutor(max_workers=12) as executor:

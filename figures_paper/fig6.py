@@ -6,8 +6,8 @@ import matplotlib.pyplot as plt
 
 
 
-from opeqmo.linear import R_pi
-from opeqmo import rgb
+from opeqmo.measurement_procedure import R_pi
+from opeqmo import rgb_method
 
 rc = {"font.family" : "serif",
       "mathtext.fontset" : "stix"}
@@ -23,7 +23,7 @@ l_b = 435.8
 # l_g = 545
 # l_b = 435
 
-k_dispersion = rgb.generate_dispersion_function_k(lambda_0=632.8, a = 25.5e3, b = 3.25e9)
+k_dispersion = rgb.define_dispersion_function_k(lambda_0=632.8, a = 25.5e3, b = 3.25e9)
 
 
 
