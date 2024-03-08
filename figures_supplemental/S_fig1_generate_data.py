@@ -4,8 +4,8 @@ import pickle
 import numpy as np
 import concurrent.futures
 
-from charpar.mueller_calculus import S_lin, XR
-from charpar.linear import MeasuredStokesParameters, calc_charparas, generate_linear_optimizer
+from opeqmo.mueller_calculus import linearly_polarized_light, optical_equivalent_model
+from opeqmo.linear import MeasuredStokesParameters, calc_charparas, generate_differential_evolution_optimizer
 
 stepsize = math.radians(1)
 omegas = np.arange(0, math.pi + stepsize / 2, stepsize)
@@ -25,9 +25,9 @@ for delta in deltas:
         true_values.append((delta, theta, omega))
 
         # Measured Stokes parameters
-        model = XR(delta=delta, theta=theta, omega=omega)
-        S_phi1 = model.dot(S_lin(phi_1))
-        S_phi2 = model.dot(S_lin(phi_2))
+        model = optical_equivalent_model(delta=delta, theta=theta, omega=omega)
+        S_phi1 = model.dot(linearly_polarized_light(phi_1))
+        S_phi2 = model.dot(linearly_polarized_light(phi_2))
 
         measured = MeasuredStokesParameters([phi_1, phi_2],
                                             [S_phi1[1], S_phi2[1]],
@@ -35,28 +35,28 @@ for delta in deltas:
 
         measured_Stokes.append(measured)
 
-        optimization_1 = generate_linear_optimizer(
+        optimization_1 = generate_differential_evolution_optimizer(
             lb_delta=0, ub_delta=math.pi,
             lb_theta=0, ub_theta=math.pi / 2,
             lb_omega=0, ub_omega=math.pi,
             strategy="best1bin"
         )
 
-        optimization_2 = generate_linear_optimizer(
+        optimization_2 = generate_differential_evolution_optimizer(
             lb_delta=0, ub_delta=math.pi,
             lb_theta=0, ub_theta=math.pi,
             lb_omega=0, ub_omega=2 * math.pi,
             strategy="best1bin"
         )
 
-        optimization_3 = generate_linear_optimizer(
+        optimization_3 = generate_differential_evolution_optimizer(
             lb_delta=0, ub_delta=math.pi,
             lb_theta=0, ub_theta=math.pi / 2,
             lb_omega=0, ub_omega=math.pi,
             strategy="rand1exp"
         )
 
-        optimization_4 = generate_linear_optimizer(
+        optimization_4 = generate_differential_evolution_optimizer(
             lb_delta=0, ub_delta=math.pi,
             lb_theta=0, ub_theta=math.pi,
             lb_omega=0, ub_omega=2 * math.pi,

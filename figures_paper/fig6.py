@@ -6,8 +6,8 @@ import matplotlib.pyplot as plt
 
 
 
-from charpar.linear import R_pi
-from charpar import rgb
+from opeqmo.linear import R_pi
+from opeqmo import rgb
 
 rc = {"font.family" : "serif",
       "mathtext.fontset" : "stix"}

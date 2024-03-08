@@ -4,8 +4,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pi_axis_plotter
 
-from charpar.linear import R_pi
-from charpar.circular import R_pi_2
+from opeqmo.triangle_wave_functions import T_pi
+from opeqmo.triangle_wave_functions import T_pi_2
 
 rc = {"font.family": "serif",
       "mathtext.fontset": "stix"}
@@ -13,8 +13,8 @@ plt.rcParams.update(rc)
 plt.rcParams["font.serif"] = ["Times New Roman"] + plt.rcParams["font.serif"]
 
 delta = np.arange(0, 4 * np.pi, 0.001)
-delta_R_linear = np.array([R_pi(d) for d in delta])
-delta_R_circ = np.array([R_pi_2(d) for d in delta])
+delta_R_linear = np.array([T_pi(d) for d in delta])
+delta_R_circ = np.array([T_pi_2(d) for d in delta])
 
 
 

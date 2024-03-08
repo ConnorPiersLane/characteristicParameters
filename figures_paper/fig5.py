@@ -2,8 +2,8 @@ import math
 import numpy as np
 import matplotlib.pyplot as plt
 import pi_axis_plotter
-from charpar.linear import R_pi
-from charpar.rgb import generate_dispersion_function_k
+from opeqmo.triangle_wave_functions import T_pi
+from opeqmo.rgb import generate_dispersion_function_k
 
 rc = {"font.family" : "serif",
       "mathtext.fontset" : "stix"}
@@ -34,24 +34,24 @@ def delta_A_b(delta_A_r: float) -> float:
 
 print(f"delta_b = {round(l_r / l_b * k_dispersion(l_b) / k_dispersion(l_r), ndigits=4)} x delta_r")
 delta_A_r_1 = np.arange(0*np.pi, 10*np.pi, 0.001)
-delta_R_r_1 = np.array([R_pi(d) for d in delta_A_r_1])
-delta_R_g_1 = np.array([R_pi(delta_A_g(d)) for d in delta_A_r_1])
-delta_R_b_1 = np.array([R_pi(delta_A_b(d)) for d in delta_A_r_1])
+delta_R_r_1 = np.array([T_pi(d) for d in delta_A_r_1])
+delta_R_g_1 = np.array([T_pi(delta_A_g(d)) for d in delta_A_r_1])
+delta_R_b_1 = np.array([T_pi(delta_A_b(d)) for d in delta_A_r_1])
 d = 20*math.pi
-print(f"{round(R_pi(d), ndigits=2)}")
-print(f"{round(R_pi(delta_A_g(d)), ndigits=2)}")
-print(f"{round(R_pi(delta_A_b(d)), ndigits=2)}")
+print(f"{round(T_pi(d), ndigits=2)}")
+print(f"{round(T_pi(delta_A_g(d)), ndigits=2)}")
+print(f"{round(T_pi(delta_A_b(d)), ndigits=2)}")
 
 
 delta_A_r_2 = np.arange(10*np.pi, 20*np.pi, 0.001)
-delta_R_r_2 = np.array([R_pi(d) for d in delta_A_r_2])
-delta_R_g_2 = np.array([R_pi(delta_A_g(d)) for d in delta_A_r_2])
-delta_R_b_2 = np.array([R_pi(delta_A_b(d)) for d in delta_A_r_2])
+delta_R_r_2 = np.array([T_pi(d) for d in delta_A_r_2])
+delta_R_g_2 = np.array([T_pi(delta_A_g(d)) for d in delta_A_r_2])
+delta_R_b_2 = np.array([T_pi(delta_A_b(d)) for d in delta_A_r_2])
 
 delta_A_r_3 = np.arange(20*np.pi, 30*np.pi, 0.001)
-delta_R_r_3 = np.array([R_pi(d) for d in delta_A_r_3])
-delta_R_g_3 = np.array([R_pi(delta_A_g(d)) for d in delta_A_r_3])
-delta_R_b_3 = np.array([R_pi(delta_A_b(d)) for d in delta_A_r_3])
+delta_R_r_3 = np.array([T_pi(d) for d in delta_A_r_3])
+delta_R_g_3 = np.array([T_pi(delta_A_g(d)) for d in delta_A_r_3])
+delta_R_b_3 = np.array([T_pi(delta_A_b(d)) for d in delta_A_r_3])
 
 
 

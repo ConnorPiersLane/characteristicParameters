@@ -5,7 +5,7 @@ from typing import Callable
 import numpy as np
 from scipy import optimize
 
-from charpar.linear import R_pi
+from opeqmo.linear import R_pi
 
 
 def generate_dispersion_function_k(lambda_0, a, b) -> Callable[[float], float]:

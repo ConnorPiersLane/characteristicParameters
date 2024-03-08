@@ -1,15 +1,19 @@
 import math
 from dataclasses import dataclass
-from typing import Callable
+from typing import Callable, Union
 import numpy as np
 from scipy import optimize
 
+"""
+Important:
+All of these functions and refer to the measurement procedure described in section 2.2 of my paper:
+"""
 
 @dataclass()
 class Charparas_tilde:
     """
-    Relative values of the Characteristic Parameters
-    "Tilde" indicates that these are "relative" values
+    Stores the measured Characteristic Parameters
+    "Tilde" indicates that these are "measured" values
     Attributes:
         delta_tilde: [rad]
         theta_tilde: [rad]
@@ -19,31 +23,63 @@ class Charparas_tilde:
     theta_tilde: float
     omega_tilde: float
 
-
-def R_pi(delta: float) -> float:
+@dataclass
+class MeasuredCharacteristicParameters:
     """
-    Describes the relation between actual, absolute phase difference and measurable, relative, phase difference
-    when using linearly polarized incident light
+    Class that stores the measured characteristic parameters.
+    If the approach described in section 2.2 is used,
+    the ranges are (see section 2.3 "Measurement ranges"):
+        delta: [rad] 0-pi
+        theta: [rad] 0-pi/4 (but cannot distinguish between fast and slow axis)
+        omega: [rad] 0-pi/2
 
-    Args:
-        delta: [rad] absolute phase difference of a linear retarder
-
-    Returns: [rad] 0-pi relative phase difference
+    Attributes:
+        delta: [rad]
+        theta: [rad]
+        omega: [rad]
 
     """
+    delta: float
+    theta: float
+    omega: float
 
-    return abs(((delta-math.pi) % (2*math.pi))-math.pi)
 
-    ## Alternative 1:
-    # if delta % (2 * math.pi) < math.pi:
-    #     return delta % math.pi
-    # else:
-    #     return math.pi - (delta % math.pi)
+class MeasuredNormalizedStokesParameters:
+    """
+    This class refers to the measured normalized Stokes Parameters used in section 2.2 "Measurement Procedure".
+    Let the incident linearly polarized light be oriented at angle phi.
+    S0, S1, S2, S3 are the resulting and measured Stokes parameters.
+    The will be normalized in the constructor.
+    """
+    def __init__(self, phi: float, S0: float, S1: float, S2: float, S3: float | None = None):
+        """
 
-    ## Alternative 2:
-    # return math.pi/2 + math.asin(math.sin(delta-math.pi/2))
+        Args:
+            phi: orientation angle of the incident linearly polarized light
+            S0: Measured total Intensity (will be set =1 during initialization)
+            S1: Measured S1 Stokes parameter
+            S2: Measured S2 Stokes parameter
+            S3: (if available), measured S3 Stkes parameter
+        """
+
+        self.phi = phi
+        self.S0 = 1
+        self.S1 = S1 / S0
+        self.S2 = S2 / S0
+        if S3:
+            self.S3 = S3 / S0
+        else:
+            self.S3 = None
+
+
 
 class MeasuredStokesParameters:
+    """
+    Class that stores the measured Stokes Parameters that have been normalized.
+
+
+
+    """
     def __init__(self, phis: list[float], S_1s: list[float], S_2s: list[float]):
         """
 
@@ -59,11 +95,25 @@ class MeasuredStokesParameters:
         self.S_2s = S_2s
 
 
-def generate_linear_optimizer(
+def generate_differential_evolution_optimizer(
         lb_delta: float = 0, ub_delta: float = math.pi,
         lb_theta: float = 0, ub_theta: float = math.pi,
         lb_omega: float = 0, ub_omega: float = 2 * math.pi,
         strategy: str = "rand1exp") -> Callable[[Callable], optimize.OptimizeResult]:
+    """
+    This function returns a function, that finds the minimum (using differential evolution) of a
+    Args:
+        lb_delta:
+        ub_delta:
+        lb_theta:
+        ub_theta:
+        lb_omega:
+        ub_omega:
+        strategy:
+
+    Returns:
+
+    """
     def de_optimizer(func: Callable) -> optimize.OptimizeResult:
         return optimize.differential_evolution(func=func,
                                                bounds=((lb_delta, ub_delta),
@@ -152,7 +202,7 @@ def generate_residual_function_R(phis: list[float],
 
 def calc_charparas(
         measured_stokes_parameters: MeasuredStokesParameters,
-        optimizer: Callable[[Callable], optimize.OptimizeResult] = generate_linear_optimizer(),
+        optimizer: Callable[[Callable], optimize.OptimizeResult] = generate_differential_evolution_optimizer(),
 ) -> Charparas_tilde:
     residual_norm = generate_residual_function_R(
         phis=measured_stokes_parameters.phis,

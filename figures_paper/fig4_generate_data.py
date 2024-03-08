@@ -3,8 +3,8 @@ import pickle
 import numpy as np
 import concurrent.futures
 
-from charpar.mueller_calculus import S_lin, XR
-from charpar.linear import MeasuredStokesParameters, calc_charparas
+from opeqmo.mueller_calculus import linearly_polarized_light, optical_equivalent_model
+from opeqmo.linear import MeasuredStokesParameters, calc_charparas
 
 stepsize = math.radians(30)
 deltas = np.arange(0, 2 * math.pi + stepsize / 2, stepsize)  # x-axis
@@ -24,9 +24,9 @@ for delta in deltas:
         true_values.append((delta, theta, omega))
 
         # Measured Stokes parameters
-        model = XR(delta=delta, theta=theta, omega=omega)
-        S_phi1 = model.dot(S_lin(phi_1))
-        S_phi2 = model.dot(S_lin(phi_2))
+        model = optical_equivalent_model(delta=delta, theta=theta, omega=omega)
+        S_phi1 = model.dot(linearly_polarized_light(phi_1))
+        S_phi2 = model.dot(linearly_polarized_light(phi_2))
 
         measured = MeasuredStokesParameters([phi_1, phi_2],
                                             [S_phi1[1], S_phi2[1]],

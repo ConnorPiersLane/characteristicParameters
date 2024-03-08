@@ -5,7 +5,7 @@ import numpy as np
 from PIL import Image
 from matplotlib.colors import ListedColormap
 
-from charpar.linear import R_pi
+from opeqmo.triangle_wave_functions import T_pi
 from matplotlib.ticker import MultipleLocator
 
 
@@ -53,7 +53,7 @@ for i in (1,2,3,4):
     omega_diff = []
 
     for (true, fitted) in zip(delta_true, delta_tilde):
-        true = R_pi(true)  # Measurement range is [0,\pi], hence we need to calculate the respective true relative value
+        true = T_pi(true)  # Measurement range is [0,\pi], hence we need to calculate the respective true relative value
         Diff = abs(true-fitted)
         color = calc_color(Diff)
         delta_diff.append(color)

@@ -2,8 +2,8 @@ import math
 import numpy as np
 import matplotlib.pyplot as plt
 import pi_axis_plotter
-from charpar.linear import R_pi
-from charpar.rgb import generate_dispersion_function_k
+from opeqmo.linear import R_pi
+from opeqmo.rgb import generate_dispersion_function_k
 
 rc = {"font.family" : "serif",
       "mathtext.fontset" : "stix"}
