@@ -4,7 +4,7 @@ import numpy as np
 import concurrent.futures
 
 from opeqmo.mueller_calculus import linearly_polarized_light, optical_equivalent_model
-from opeqmo.measurement_procedure import MeasuredStokesParameters, calculate_characteristic_parameters
+from opeqmo.measurementProcedure import MeasuredStokesParameters, calculate_characteristic_parameters
 
 stepsize = math.radians(30)
 deltas = np.arange(0, 2 * math.pi + stepsize / 2, stepsize)  # x-axis

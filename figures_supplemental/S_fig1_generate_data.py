@@ -5,7 +5,7 @@ import numpy as np
 import concurrent.futures
 
 from opeqmo.mueller_calculus import linearly_polarized_light, optical_equivalent_model
-from opeqmo.measurement_procedure import MeasuredStokesParameters, calculate_characteristic_parameters, define_function_that_finds_minimum_of_R_function
+from opeqmo.measurementProcedure import MeasuredStokesParameters, calculate_characteristic_parameters, define_function_that_finds_minimum_of_R_function
 
 stepsize = math.radians(1)
 omegas = np.arange(0, math.pi + stepsize / 2, stepsize)

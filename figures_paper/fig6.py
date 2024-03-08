@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 
 
 
-from opeqmo.measurement_procedure import R_pi
+from opeqmo.triangle_wave_functions import T_pi
 from opeqmo import rgb_method
 
 rc = {"font.family" : "serif",
@@ -14,7 +14,7 @@ rc = {"font.family" : "serif",
 plt.rcParams.update(rc)
 plt.rcParams["font.serif"] = ["Times New Roman"] + plt.rcParams["font.serif"]
 
-# CIE RGB color space
+# CIE rgb_method color space
 
 l_r = 632.8
 l_g = 546.1
@@ -23,7 +23,7 @@ l_b = 435.8
 # l_g = 545
 # l_b = 435
 
-k_dispersion = rgb.define_dispersion_function_k(lambda_0=632.8, a = 25.5e3, b = 3.25e9)
+k_dispersion = rgb_method.define_reduced_birefringence_function(lambda_0=632.8, a = 25.5e3, b = 3.25e9)
 
 
 
@@ -41,36 +41,36 @@ print(f"delta_g = {round(l_r / l_b * k_dispersion(l_b) / k_dispersion(l_r), ndig
 delta_A_r_1 = 21.5*math.pi
 delta_A_r_2 = 21.75*math.pi
 delta_A_r_3 = 21.1*math.pi
-delta_r_1 = round(R_pi(delta_A_r_1), ndigits=2)
-delta_g_1 = round(R_pi(delta_A_g(delta_A_r_1)), ndigits=2)
-delta_b_1 = round(R_pi(delta_A_b(delta_A_r_1)), ndigits=2)
+delta_r_1 = round(T_pi(delta_A_r_1), ndigits=2)
+delta_g_1 = round(T_pi(delta_A_g(delta_A_r_1)), ndigits=2)
+delta_b_1 = round(T_pi(delta_A_b(delta_A_r_1)), ndigits=2)
 print("One:")
 print(f"delta_r = {delta_r_1}")
 print(f"delta_g = {delta_g_1}")
 print(f"delta_b = {delta_b_1}")
 print("Two:")
-delta_r_2 = round(R_pi(delta_A_r_2), ndigits=2)
-delta_g_2 = round(R_pi(delta_A_g(delta_A_r_2)), ndigits=2)
-delta_b_2 = round(R_pi(delta_A_b(delta_A_r_2)), ndigits=2)
+delta_r_2 = round(T_pi(delta_A_r_2), ndigits=2)
+delta_g_2 = round(T_pi(delta_A_g(delta_A_r_2)), ndigits=2)
+delta_b_2 = round(T_pi(delta_A_b(delta_A_r_2)), ndigits=2)
 print(f"delta_r = {delta_r_2}")
 print(f"delta_g = {delta_g_2}")
 print(f"delta_b = {delta_b_2}")
 
 
-E_1 = rgb.generate_error_function_E(
+E_1 = rgb_method.define_error_function_E(
       measured_relative_phases=[delta_r_1,delta_g_1,delta_b_1],
       wavelengths=[l_r, l_g, l_b],
-      reduced_dispersion_function=k_dispersion
+      reduced_birefringence_function=k_dispersion
 )
-E_2 = rgb.generate_error_function_E(
+E_2 = rgb_method.define_error_function_E(
       measured_relative_phases=[delta_r_2,delta_g_2,delta_b_2],
       wavelengths=[l_r, l_g, l_b],
-      reduced_dispersion_function=k_dispersion
+      reduced_birefringence_function=k_dispersion
 )
-L = rgb.generate_cost_function_L([E_1, E_2], K=1)
+L = rgb_method.generate_cost_function_L([E_1, E_2], K=1)
 
-optimizer1 = rgb.generate_rgb_optimizer(n_parameters=2, ub_delta=5*math.pi)
-optimizer2 = rgb.generate_rgb_optimizer(n_parameters=2, ub_delta=25*math.pi)
+optimizer1 = rgb_method.define_function_that_finds_minimum_of_E_and_J_function(n_parameters=2, ub_delta=5 * math.pi)
+optimizer2 = rgb_method.define_function_that_finds_minimum_of_E_and_J_function(n_parameters=2, ub_delta=25 * math.pi)
 result1 = optimizer1(L)
 result2 = optimizer2(L)
 
