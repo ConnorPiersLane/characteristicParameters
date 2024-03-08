@@ -205,10 +205,10 @@ class MeasurementProcedure:
             return self.residual_function_R(delta=x[0], theta=x[1], omega=x[2])
 
         result = optimize.differential_evolution(func=func,
-                                                 bounds=((self.lb_delta, self.ub_delta),
-                                                         (self.lb_theta, self.ub_theta),
-                                                         (self.lb_omega, self.ub_omega)),
-                                                 strategy=self.strategy)
+                                                 bounds=((lb_delta, ub_delta),
+                                                         (lb_theta, ub_theta),
+                                                         (lb_omega, ub_omega)),
+                                                 strategy=strategy)
 
         delta_tilde = result.x[0]
         theta_tilde = MeasurementProcedure.get_theta_within_specified_range(result.x[1])
