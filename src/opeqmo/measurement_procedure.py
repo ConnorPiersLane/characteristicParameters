@@ -173,7 +173,6 @@ class MeasurementProcedure:
         """
         return np.linalg.norm(self.residual_vector_r(delta, theta, omega), ord=2)
 
-        # Settings for finding the minimum of the residual function R
 
     def find_characteristic_parameters(self,
                                        lb_delta: float = 0,

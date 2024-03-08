@@ -129,8 +129,6 @@ class MultipleNeighboringLocations:
         self.reference_wavelength = neighboring_locations[0].reference_wavelength
         self.locations: list[OneLocation] = neighboring_locations
 
-
-
     def _validate_deltas_input(self, deltas):
         if not len(deltas) == len(self.locations):
             raise ValueError(f"The input has length: {len(deltas)}."
@@ -143,7 +141,7 @@ class MultipleNeighboringLocations:
 
         Args:
             deltas: list of retardations at the reference wavelength (see self.reference_wavelength)
-
+            k: K-Parameter
         """
         self._validate_deltas_input(deltas)
 
@@ -156,15 +154,19 @@ class MultipleNeighboringLocations:
             total_sum = total_sum + E + k * (delta - delta_mean) ** 2
         return total_sum
 
-    def find_neighboring_retardations(self,
+    def find_all_neighboring_retardations(self,
+                                      k: float,
                                       lb_delta: float = 0,
                                       ub_delta: float = 50 * math.pi,
                                       strategy: str = "rand1exp"):
         """
-        Finds all retardations belonging to the neighboring locations.
+        Finds the minimum of Eq. (32) in the paper
+
+        Finds all retardations belonging to the neighboring locations with the loss function L
         All retardations are at the reference wavelength (self.reference_wavelength)
 
         Args:
+            k: K-Parameter of the loss function (see Eq. (32) in the paper)
             lb_delta: lower boundary of the search area (default i 0)
             ub_delta: upper boundary of the search area (default is 50 pi)
             strategy: strategy of the differential evolution (see
@@ -173,88 +175,17 @@ class MultipleNeighboringLocations:
 
         """
 
+        # func:
+        def func(x):
+            return self.loss_function_L(deltas=x, k=k)
 
+        # define boundaries:
+        bounds = []
+        for _ in self.locations:
+            bounds.append((lb_delta, ub_delta))
 
-def define_error_function_E(
-        measured_retardations: list[MeasuredRetardation],
-        reduced_birefringence_function: Callable[[float], float]) -> Callable[[float], float]:
-    """
-    Defines and returns the error function E, which is the Euclidean Norm of the error vector e(delta)
-    (see section 2.6 "Adapted RGB method").
-    IMPORTANT:
-    The wavelength of the first entry (wave_0 = measured_retardations[0].wavelength)
-    will be the reference wavelength of the input parameter delta in E(delta).
-    In other words. E(delta), where delta corresponds to wave_0.
+        optimization_result = optimize.differential_evolution(func=func,
+                                                              bounds=bounds,
+                                                              strategy=strategy)
 
-    Args:
-        measured_retardations: list of measured retardations
-        reduced_birefringence_function: reduced birefringence function
-
-    Returns: error function E(delta)
-
-    """
-
-    wave_0 = measured_retardations[0].wavelength  # The first wavelength will be taken as the reference wavelength
-
-    def error_function_E(delta):
-        vector = []
-        for measured_retardation in measured_retardations:
-            wave = measured_retardation.wavelength
-            delta_measured = measured_retardation.delta
-
-            delta_in = (wave_0 / wave *
-                        reduced_birefringence_function(wave) / reduced_birefringence_function(wave_0)
-                        * delta)
-
-            vector.append(delta_measured - T_pi(delta_in))
-
-        return np.linalg.norm(vector, ord=2)
-
-    return error_function_E
-
-
-def define_function_that_finds_minimum_of_E_and_J_function(n_parameters: int,
-                                                           lb_delta: float = 0,
-                                                           ub_delta: float = 50 * math.pi,
-                                                           strategy: str = "rand1exp") -> Callable[
-    [Callable], optimize.OptimizeResult]:
-    bounds = []
-    for _ in range(n_parameters):
-        bounds.append((lb_delta, ub_delta))
-
-    def de_optimizer(func: Callable) -> optimize.OptimizeResult:
-        return optimize.differential_evolution(func=func,
-                                               bounds=bounds,
-                                               strategy=strategy)
-
-    return de_optimizer
-
-
-def generate_cost_function_L(error_functions: list[Callable], K: float = 0.1) -> Callable[[list[float]], float]:
-    """
-
-    Args:
-        error_functions:
-        K:
-
-    Returns:
-
-    """
-
-    def cost_function_L(x: list[float]) -> float:
-        delta_mean = statistics.fmean(x)
-        L = 0
-        for (E, delta) in zip(error_functions, x):
-            L = L + E(delta) + K * (delta - delta_mean) ** 2
-        return L
-
-    return cost_function_L
-
-
-def calc_absolute_phase_differences(measured_relative_phases: list[float],
-                                    wavelengths: list[float],
-                                    reduced_dispersion_function: Callable[[float], float],
-                                    ):
-    residual_vector_norm = define_error_function_E(measured_relative_phases=measured_relative_phases,
-                                                   wavelengths=wavelengths,
-                                                   reduced_birefringence_function=reduced_dispersion_function)
+        return optimization_result.x

@@ -77,7 +77,7 @@ result2 = optimizer2(L)
 print(f"delta_r1 = {result1.x[0]/math.pi}, delta_r2 = {result1.x[1]/math.pi}")
 print(f"delta_r1 = {result2.x[0]/math.pi}, delta_r2 = {result2.x[1]/math.pi}")
 
-from figures_paper import pi_axis_plotter
+from figures_main_paper import pi_axis_plotter
 delta_r_plotting = np.arange(0, 26 * np.pi, 0.001)
 res1 = [E_1(x) for x in delta_r_plotting]
 res2 = [E_2(x) for x in delta_r_plotting]
