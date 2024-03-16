@@ -4,8 +4,8 @@ import pickle
 import numpy as np
 import concurrent.futures
 
-from opeqmo.mueller_calculus import linearly_polarized_light, optical_equivalent_model
-from opeqmo.measurement_procedure import MeasuredStokesParameters, calculate_characteristic_parameters
+from oem.mueller_calculus import linearly_polarized_light, optical_equivalent_model
+from oem.measurement_procedure import MeasuredStokesParameters, calculate_characteristic_parameters
 
 
 

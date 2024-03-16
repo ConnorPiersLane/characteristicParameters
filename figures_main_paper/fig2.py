@@ -3,8 +3,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pi_axis_plotter
 
-from opeqmo.triangle_wave_functions import T_pi
-from opeqmo.triangle_wave_functions import T_pi_2
+from oem.triangle_wave_functions import T_pi
+from oem.triangle_wave_functions import T_pi_2
 
 # Formatting matplotlib
 rc = {"font.family": "serif",

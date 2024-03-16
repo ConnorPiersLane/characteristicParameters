@@ -5,7 +5,7 @@ import numpy as np
 from PIL import Image
 from matplotlib.colors import ListedColormap
 
-from opeqmo.triangle_wave_functions import T_pi
+from oem.triangle_wave_functions import T_pi
 from matplotlib.ticker import MultipleLocator
 
 

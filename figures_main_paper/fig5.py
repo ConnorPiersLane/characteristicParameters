@@ -2,27 +2,22 @@ import math
 import numpy as np
 import matplotlib.pyplot as plt
 import pi_axis_plotter
-from opeqmo.triangle_wave_functions import T_pi
-from opeqmo.rgb_method import define_reduced_birefringence_function
+from oem.triangle_wave_functions import T_pi
+from oem.rgb_method import define_reduced_birefringence_function
 
 rc = {"font.family" : "serif",
       "mathtext.fontset" : "stix"}
 plt.rcParams.update(rc)
 plt.rcParams["font.serif"] = ["Times New Roman"] + plt.rcParams["font.serif"]
 
-# CIE RGB color space
-
+# Define wavelengths
 l_r = 632.8
 l_g = 546.1
 l_b = 435.8
-# l_r = 610
-# l_g = 545
-# l_b = 435
 
 k_dispersion = define_reduced_birefringence_function(lambda_0=632.8, a = 25.5e3, b = 3.25e9)
 
-
-
+# Express delta_g as function of delta_r see Eq. (25)
 def delta_A_g(delta_A_r: float) -> float:
       return l_r / l_g * k_dispersion(l_g) / k_dispersion(l_r) * delta_A_r
 

@@ -2,7 +2,7 @@ import math
 import numpy as np
 import matplotlib.pyplot as plt
 import pi_axis_plotter
-from opeqmo.triangle_wave_functions import T_pi
+from oem.triangle_wave_functions import T_pi
 
 # Formatting matplotlib
 rc = {"font.family" : "serif",
@@ -27,8 +27,8 @@ fig, ax = plt.subplots()
 ax.grid(True)
 ax.set_aspect(1.0)
 
-ax.plot(delta_r, delta_r_tilde, color="red", label=r"$\tilde{\delta}_r=R_{\pi}(\delta_r)$")
-ax.plot(delta_r, delta_g_tilde, color="green", label=r"$\tilde{\delta}_g=R_{\pi}(\delta_g)$")
+ax.plot(delta_r, delta_r_tilde, color="red", label=r"$\tilde{\delta}_r=T_{\pi}(\delta_r)$")
+ax.plot(delta_r, delta_g_tilde, color="green", label=r"$\tilde{\delta}_g=T_{\pi}(\delta_g)$")
 
 ax.xaxis.set_major_locator(plt.MultipleLocator(np.pi / 2))
 ax.xaxis.set_minor_locator(plt.MultipleLocator(np.pi / 4))
@@ -44,9 +44,8 @@ x = [math.pi/2, 6*math.pi-math.pi/2, 6*math.pi+math.pi/2]
 ax.plot(x,[T_pi(d) for d in x], 'ko', markersize=6)
 ax.plot(x, [T_pi(delta_g(d)) for d in x], 'ko', markersize=6)
 ax.plot([3*math.pi, 3*math.pi], [0, math.pi], color="black", linestyle='solid', linewidth=1.5)
-#ax.plot([6*math.pi, 6*math.pi], [0, math.pi], color="black", linestyle='dotted', linewidth=1.5)
 ax.set_ylim([0, math.pi])
-ax.set_xlim([0, 7 * math.pi])
+ax.set_xlim([0, 6.75 * math.pi])
 
 d = 5/2*math.pi
 x=[d]

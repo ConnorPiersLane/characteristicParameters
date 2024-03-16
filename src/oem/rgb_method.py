@@ -5,7 +5,7 @@ from typing import Callable
 import numpy as np
 from scipy import optimize
 
-from opeqmo.triangle_wave_functions import T_pi
+from oem.triangle_wave_functions import T_pi
 
 """
 Important:
@@ -13,9 +13,11 @@ Most of these functions refer to the RGB method described in section 2.6 of my p
 I recommend using the paper as a reference.
 """
 
+class InvalidInputError(Exception):
+    pass
 
 @dataclass()
-class MeasuredRetardation:
+class MeasuredDelta:
     """
     Attributes:
         wavelength: corresponding wavelength at which the retardation has been obtained
@@ -53,10 +55,32 @@ def define_reduced_birefringence_function(lambda_0, a, b) -> Callable[[float], f
     return k
 
 
+def convert_retardation_to_different_wavelength(k_function: Callable[[float], float],
+                                                wavelength_old: float,
+                                                delta_old: float,
+                                                wavelength_new):
+    """
+    See Equation (25) in the paper
+
+    Args:
+        k_function: a reduced_birefringence_function
+        wavelength_old: wavelength at which the retardation is known
+        delta_old: known retardation
+        wavelength_new: wavelength for which we want to know the retardation
+
+    Returns: delta_new / new retardation for wavelength_new
+
+    """
+    return (wavelength_old / wavelength_new
+            * k_function(wavelength_new) / k_function(wavelength_old)
+            * delta_old)
+
+
 class OneLocation:
 
     def __init__(self,
-                 measured_retardations: list[MeasuredRetardation],
+                 measured_delta_r: MeasuredDelta,
+                 measured_additional_deltas: MeasuredDelta | list[MeasuredDelta],
                  reduced_birefringence_function: Callable[[float], float]):
         """
 
@@ -65,36 +89,47 @@ class OneLocation:
             reduced_birefringence_function: k(lambda) = birefringence(lambda) / birefringence(lambda_0)
 
         """
-        self.measured_deltas: list[MeasuredRetardation] = measured_retardations
+        # Set the reference wavelength
+        # the function parameter "delta" will always refer to the reference wavelength
+        # In the paper, this is delta_r
+        self.reference_wavelength = measured_delta_r[0].wavelength
+
+        if not isinstance(measured_additional_deltas, list):
+            measured_additional_deltas = [measured_additional_deltas]
+
+        self.reference_delta: MeasuredDelta = measured_delta_r
+        self.additional_deltas: list[MeasuredDelta] = measured_additional_deltas
         self.k_function: Callable[[float], float] = reduced_birefringence_function
 
-        # Set the reference wavelength as the first wavelength in the input list
-        # the function parameter "delta" will always refer to the reference wavelength
-        self.reference_wavelength = measured_retardations[0].wavelength
 
-    def error_vector_e(self, delta) -> list[float]:
+    def __repr__(self):
+        return (f"Class {self.__class__.__name__} with reference wavelength {self.reference_wavelength}")
+
+
+    def error_vector_e(self, delta_r: float) -> list[float]:
         """
         Eq. (26) in the paper
 
         Args:
-            delta: retardation of the light at the reference wavelength
+            delta_r: retardation of the light at the reference wavelength
 
         """
-        # The reference wavelength has been set in the constructor
-        wave_0 = self.reference_wavelength
 
         vector = []
-        for measured_retardation in self.measured_deltas:
-            wave = measured_retardation.wavelength
-            delta_measured = measured_retardation.delta
+        for measured_delta in [self.reference_delta] + self.additional_deltas:
 
-            delta_in = (wave_0 / wave * self.k_function(wave) / self.k_function(wave_0) * delta)
+            delta_in = convert_retardation_to_different_wavelength(
+                k_function=self.k_function,
+                wavelength_old=self.reference_wavelength,
+                delta_old=delta_r,
+                wavelength_new=measured_delta.wavelength
+            )
 
-            vector.append(delta_measured - T_pi(delta_in))
+            vector.append(measured_delta.delta - T_pi(delta_in))
 
         return vector
 
-    def error_function_E(self, delta):
+    def error_function_E(self, delta_r: float):
         """
         Eq. (27) in the paper
 
@@ -102,13 +137,13 @@ class OneLocation:
             delta: retardation at the reference wavelength (see self.reference_wavelength)
 
         """
-        return np.linalg.norm(self.error_vector_e(delta), ord=2)
+        return np.linalg.norm(self.error_vector_e(delta_r), ord=2)
 
 
 class MultipleNeighboringLocations:
 
     @staticmethod
-    def _validate_init_input(neighboring_locations):
+    def _check_if_all_have_the_same_reference_wavelength(neighboring_locations):
         # Set the Reference Wavelength
         wave0 = neighboring_locations[0].reference_wavelength
 
@@ -116,7 +151,7 @@ class MultipleNeighboringLocations:
         for i in range(1, len(neighboring_locations)):
             location = neighboring_locations[i]
             if not math.isclose(wave0, location.reference_wavelength, rel_tol=1e-3):
-                raise ValueError(
+                raise InvalidInputError(
                     f"The first location at position 0 has a reference wavelength of: {wave0}. "
                     f"But the location at position {i} has a reference wavelength of: {location.reference_wavelength}. "
                     f"All reference wavelengths must be the same.")
@@ -124,41 +159,45 @@ class MultipleNeighboringLocations:
 
     def __init__(self, neighboring_locations: list[OneLocation]):
 
-        self._validate_init_input(neighboring_locations)
+        self._check_if_all_have_the_same_reference_wavelength(neighboring_locations)
 
         self.reference_wavelength = neighboring_locations[0].reference_wavelength
         self.locations: list[OneLocation] = neighboring_locations
 
-    def _validate_deltas_input(self, deltas):
-        if not len(deltas) == len(self.locations):
-            raise ValueError(f"The input has length: {len(deltas)}."
+    def __repr__(self):
+        return (f"Class {self.__class__.__name__} with reference wavelength {self.reference_wavelength}")
+
+
+    def _validate_deltas_input(self, delta_rs):
+        if not len(delta_rs) == len(self.locations):
+            raise InvalidInputError(f"The input has length: {len(delta_rs)}."
                              f"It must be the same as the number of locations: {len(self.locations)}")
         return None
 
-    def loss_function_L(self, deltas: list[float], k: float = 1) -> float:
+    def collective_error_function_L(self, delta_rs: list[float], k: float = 1) -> float:
         """
         Eq. (32) in the paper
 
         Args:
-            deltas: list of retardations at the reference wavelength (see self.reference_wavelength)
+            delta_rs: list of retardations at the reference wavelength (see self.reference_wavelength)
             k: K-Parameter
         """
-        self._validate_deltas_input(deltas)
+        self._validate_deltas_input(delta_rs)
 
-        error_functions = [one_location.error_function_E(delta)
-                           for (one_location, delta) in zip(self.locations, deltas)]
+        error_functions = [
+            one_location.error_function_E(delta_r) for (one_location, delta_r) in zip(self.locations, delta_rs)]
 
-        delta_mean = statistics.fmean(deltas)
+        delta_mean = statistics.fmean(delta_rs)
         total_sum = 0
-        for (E, delta) in zip(error_functions, deltas):
-            total_sum = total_sum + E + k * (delta - delta_mean) ** 2
+        for (E, delta_r) in zip(error_functions, delta_rs):
+            total_sum = total_sum + E + k * (delta_r - delta_mean) ** 2
         return total_sum
 
-    def find_all_neighboring_retardations(self,
-                                      k: float,
-                                      lb_delta: float = 0,
-                                      ub_delta: float = 50 * math.pi,
-                                      strategy: str = "rand1exp"):
+    def find_all_neighboring_delta_r(self,
+                                     k: float,
+                                     lb_delta: float = 0,
+                                     ub_delta: float = 50 * math.pi,
+                                     strategy: str = "rand1exp"):
         """
         Finds the minimum of Eq. (32) in the paper
 
@@ -169,15 +208,15 @@ class MultipleNeighboringLocations:
             k: K-Parameter of the loss function (see Eq. (32) in the paper)
             lb_delta: lower boundary of the search area (default i 0)
             ub_delta: upper boundary of the search area (default is 50 pi)
-            strategy: strategy of the differential evolution (see
+            strategy: strategy of the differential evolution (see scipy documentation)
 
-        Returns: list of retardations
+        Returns: list of retardations at the reference wavelength
 
         """
 
         # func:
         def func(x):
-            return self.loss_function_L(deltas=x, k=k)
+            return self.collective_error_function_L(delta_rs=x, k=k)
 
         # define boundaries:
         bounds = []

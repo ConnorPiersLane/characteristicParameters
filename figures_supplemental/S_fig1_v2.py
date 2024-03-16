@@ -6,7 +6,7 @@ from PIL import Image
 from matplotlib.colors import ListedColormap
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
-from opeqmo.triangle_wave_functions import T_pi
+from oem.triangle_wave_functions import T_pi
 from matplotlib.ticker import MultipleLocator
 
 

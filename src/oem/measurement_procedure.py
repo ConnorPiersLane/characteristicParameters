@@ -32,7 +32,7 @@ class MeasuredCharacteristicParameters:
     omega: float
 
 
-class MeasuredOutgoingStokesVector:
+class MeasuredNormalizedStokesParametersS1S2:
     """
     This class refers to the measured outgoing Stokes Parameters used in section 2.2 "Measurement Procedure".
     Let the incident linearly polarized light be oriented at angle phi.
@@ -41,37 +41,37 @@ class MeasuredOutgoingStokesVector:
     S3 is optional
     """
 
-    def __init__(self, phi: float, S0: float, S1: float, S2: float, S3: float | None = None):
+    def __init__(self, phi: float, stokes_vector: list[float] | np.ndarray):
         """
 
         Args:
             phi: orientation angle of the incident linearly polarized light
-            S0: Measured total Intensity (will become =1 after initialization)
-            S1: Measured S1 Stokes parameter
-            S2: Measured S2 Stokes parameter
-            S3: (if available), measured S3 Stkes parameter
+            stokes_vector: Stokes vector [S0, S1, S2, S3] or [S0, S1, S2]
         """
 
         self.phi = phi
-        self.S0 = 1
+
+        # Not normalized Stokes parameters
+        S0 = stokes_vector[0]
+        S1 = stokes_vector[1]
+        S2 = stokes_vector[2]
+
+        # Normalize them and store them
         self.S1 = S1 / S0
         self.S2 = S2 / S0
-        if S3:
-            self.S3 = S3 / S0
-        else:
-            self.S3 = None
+
 
 
 class MeasurementProcedure:
 
-    def __init__(self, measured_outgoing_stokes_parameters: list[MeasuredOutgoingStokesVector]):
+    def __init__(self, measured_outgoing_stokes_parameters: list[MeasuredNormalizedStokesParametersS1S2]):
         """
 
         Args:
             measured_outgoing_stokes_parameters: list containing instances of the MeasuredOutgoingStokesVector class
         """
 
-        self.measured_stokes: list[MeasuredOutgoingStokesVector] = measured_outgoing_stokes_parameters
+        self.measured_stokes: list[MeasuredNormalizedStokesParametersS1S2] = measured_outgoing_stokes_parameters
 
     @staticmethod
     def outgoing_S1(phi, delta, theta, omega) -> float:
