@@ -17,7 +17,7 @@ class InvalidInputError(Exception):
     pass
 
 @dataclass()
-class MeasuredDelta:
+class LambdaAndDelta:
     """
     Attributes:
         wavelength: corresponding wavelength at which the retardation has been obtained
@@ -79,8 +79,8 @@ def convert_retardation_to_different_wavelength(k_function: Callable[[float], fl
 class OneLocation:
 
     def __init__(self,
-                 measured_delta_r: MeasuredDelta,
-                 measured_additional_deltas: MeasuredDelta | list[MeasuredDelta],
+                 lambda_delta_r: LambdaAndDelta,
+                 additional_lambda_deltas: LambdaAndDelta | list[LambdaAndDelta],
                  reduced_birefringence_function: Callable[[float], float]):
         """
 
@@ -92,18 +92,17 @@ class OneLocation:
         # Set the reference wavelength
         # the function parameter "delta" will always refer to the reference wavelength
         # In the paper, this is delta_r
-        self.reference_wavelength = measured_delta_r[0].wavelength
+        self.lambda_r = lambda_delta_r.wavelength
 
-        if not isinstance(measured_additional_deltas, list):
-            measured_additional_deltas = [measured_additional_deltas]
+        if not isinstance(additional_lambda_deltas, list):
+            additional_lambda_deltas = [additional_lambda_deltas]
 
-        self.reference_delta: MeasuredDelta = measured_delta_r
-        self.additional_deltas: list[MeasuredDelta] = measured_additional_deltas
+        self.measured_lambdas_and_deltas: list[LambdaAndDelta] = [lambda_delta_r] + additional_lambda_deltas
         self.k_function: Callable[[float], float] = reduced_birefringence_function
 
 
     def __repr__(self):
-        return (f"Class {self.__class__.__name__} with reference wavelength {self.reference_wavelength}")
+        return (f"Class {self.__class__.__name__} with reference wavelength {self.lambda_r}")
 
 
     def error_vector_e(self, delta_r: float) -> list[float]:
@@ -116,16 +115,16 @@ class OneLocation:
         """
 
         vector = []
-        for measured_delta in [self.reference_delta] + self.additional_deltas:
+        for measured_lambda_delta in self.measured_lambdas_and_deltas:
 
             delta_in = convert_retardation_to_different_wavelength(
                 k_function=self.k_function,
-                wavelength_old=self.reference_wavelength,
+                wavelength_old=self.lambda_r,
                 delta_old=delta_r,
-                wavelength_new=measured_delta.wavelength
+                wavelength_new=measured_lambda_delta.wavelength
             )
 
-            vector.append(measured_delta.delta - T_pi(delta_in))
+            vector.append(measured_lambda_delta.delta - T_pi(delta_in))
 
         return vector
 
@@ -145,15 +144,15 @@ class MultipleNeighboringLocations:
     @staticmethod
     def _check_if_all_have_the_same_reference_wavelength(neighboring_locations):
         # Set the Reference Wavelength
-        wave0 = neighboring_locations[0].reference_wavelength
+        lambda_r = neighboring_locations[0].lambda_r
 
         # Make sure alle Neighboring Measurements refer to the same reference wavelength
         for i in range(1, len(neighboring_locations)):
             location = neighboring_locations[i]
-            if not math.isclose(wave0, location.reference_wavelength, rel_tol=1e-3):
+            if not math.isclose(lambda_r, location.lambda_r, rel_tol=1e-3):
                 raise InvalidInputError(
-                    f"The first location at position 0 has a reference wavelength of: {wave0}. "
-                    f"But the location at position {i} has a reference wavelength of: {location.reference_wavelength}. "
+                    f"The first location at position 0 has a reference wavelength of: {lambda_r}. "
+                    f"But the location at position {i} has a reference wavelength of: {location.lambda_r}. "
                     f"All reference wavelengths must be the same.")
         return None
 
@@ -161,11 +160,11 @@ class MultipleNeighboringLocations:
 
         self._check_if_all_have_the_same_reference_wavelength(neighboring_locations)
 
-        self.reference_wavelength = neighboring_locations[0].reference_wavelength
+        self.lambda_r = neighboring_locations[0].lambda_r
         self.locations: list[OneLocation] = neighboring_locations
 
     def __repr__(self):
-        return (f"Class {self.__class__.__name__} with reference wavelength {self.reference_wavelength}")
+        return (f"Class {self.__class__.__name__} with reference wavelength {self.lambda_r}")
 
 
     def _validate_deltas_input(self, delta_rs):
@@ -197,7 +196,7 @@ class MultipleNeighboringLocations:
                                      k: float,
                                      lb_delta: float = 0,
                                      ub_delta: float = 50 * math.pi,
-                                     strategy: str = "rand1exp"):
+                                     strategy: str = "rand2exp"):
         """
         Finds the minimum of Eq. (32) in the paper
 

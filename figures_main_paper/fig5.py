@@ -52,6 +52,7 @@ delta_R_b_3 = np.array([T_pi(delta_A_b(d)) for d in delta_A_r_3])
 
 fig, (ax1, ax2, ax3) = plt.subplots(3,1, sharex=False, figsize = (6,3))
 
+
 ax1.plot(delta_A_r_1, delta_R_r_1, color="red", label=r"$\tilde{\delta}_r=T_{\pi}(\delta_r)$")
 ax1.plot(delta_A_r_1, delta_R_g_1, color="green", label=r"$\tilde{\delta}_g=T_{\pi}(\delta_g)$")
 ax1.plot(delta_A_r_1, delta_R_b_1, color="blue", label=r"$\tilde{\delta}_b=T_{\pi}(\delta_b)$")
@@ -78,9 +79,9 @@ for ax in (ax1, ax2, ax3):
       ax.yaxis.set_minor_locator(plt.MultipleLocator(np.pi / 4))
       ax.yaxis.set_major_formatter(plt.FuncFormatter(pi_axis_plotter.multiple_formatter(2)))
       ax.set_ylabel(r'$\tilde{\delta}$', fontsize=12)
-      ax.set_xlabel(r'$\delta_r$', fontsize=12)
-      ax.set_ylim([0, math.pi])
 
+      ax.set_ylim([0, math.pi])
+ax3.set_xlabel(r'$\delta_r$', fontsize=12)
 #
 # ax1.plot([6*math.pi, 6*math.pi], [0, math.pi], color="black", linestyle='solid', linewidth=1.5)
 # # ax2.plot([12*math.pi, 12*math.pi], [0, math.pi], color="black", linestyle='dotted', linewidth=1.5)
@@ -91,7 +92,7 @@ ax1.legend()
 
 
 
-ax1.legend( ncol=3, loc=(0.05, 1.02), fontsize=10)
+ax1.legend( ncol=3, loc=(0.05, 1.05), fontsize=10)
 
 plt.subplots_adjust(wspace=0, hspace=0)
 plt.savefig('Fig5.tiff', format='tiff', dpi=2000, bbox_inches='tight')

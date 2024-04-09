@@ -11,7 +11,7 @@ stepsize = math.radians(1)
 # y-axis
 omegas = np.arange(0, math.pi + stepsize / 2, stepsize)
 # x-axis
-deltas = np.arange(0, math.pi + stepsize / 2, stepsize)
+deltas = np.arange(0, 6*math.pi + stepsize / 2, stepsize)
 
 # Two orientations angles for the incident linearly polarized light:
 phi_1 = 0
@@ -45,33 +45,6 @@ for delta in deltas:
 
 
 # Define a function that can be run parallel:
-def find_parameters_1(measurement: MeasurementProcedure) -> (float, float, float):
-    parameters = measurement.find_characteristic_parameters(
-        lb_delta=0, ub_delta=math.pi,
-        lb_theta=0, ub_theta=math.pi / 2,
-        lb_omega=0, ub_omega=math.pi,
-        strategy="best1bin"
-    )
-    return parameters.delta, parameters.theta, parameters.omega
-
-def find_parameters_2(measurement: MeasurementProcedure) -> (float, float, float):
-    parameters = measurement.find_characteristic_parameters(
-        lb_delta=0, ub_delta=math.pi,
-        lb_theta=0, ub_theta=math.pi,
-        lb_omega=0, ub_omega=2 * math.pi,
-        strategy="best1bin"
-    )
-    return parameters.delta, parameters.theta, parameters.omega
-
-def find_parameters_3(measurement: MeasurementProcedure) -> (float, float, float):
-    parameters = measurement.find_characteristic_parameters(
-        lb_delta=0, ub_delta=math.pi,
-        lb_theta=0, ub_theta=math.pi / 2,
-        lb_omega=0, ub_omega=math.pi,
-        strategy="rand1exp"
-    )
-    return parameters.delta, parameters.theta, parameters.omega
-
 def find_parameters_4(measurement: MeasurementProcedure) -> (float, float, float):
     parameters = measurement.find_characteristic_parameters(
         lb_delta=0, ub_delta=math.pi,
@@ -85,26 +58,11 @@ def find_parameters_4(measurement: MeasurementProcedure) -> (float, float, float
 
 if __name__ == '__main__':
     with concurrent.futures.ProcessPoolExecutor(max_workers=12) as executor:
-        # 1
-        measured_values = list(executor.map(find_parameters_1, measurements))
-        with open("S_fig1_measured_values_1.pickle", "wb") as handle:
+
+        # 4
+        measured_values = list(executor.map(find_parameters_4, measurements))
+        with open("S_fig2_measured.pickle", "wb") as handle:
             pickle.dump(measured_values, handle)
 
-        #
-        # # 2
-        # measured_values = list(executor.map(find_parameters_2, measurements))
-        # with open("S_fig1_measured_values_2.pickle", "wb") as handle:
-        #     pickle.dump(measured_values, handle)
-        #
-        # # 3
-        # measured_values = list(executor.map(find_parameters_3, measurements))
-        # with open("S_fig1_measured_values_3.pickle", "wb") as handle:
-        #     pickle.dump(measured_values, handle)
-        #
-        # # 4
-        # measured_values = list(executor.map(find_parameters_4, measurements))
-        # with open("S_fig1_measured_values_4.pickle", "wb") as handle:
-        #     pickle.dump(measured_values, handle)
-
-    with open("S_fig1_true_values.pickle", "wb") as handle:
+    with open("S_fig2_true.pickle", "wb") as handle:
         pickle.dump(true_values, handle)
