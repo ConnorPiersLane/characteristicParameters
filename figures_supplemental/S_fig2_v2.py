@@ -6,7 +6,7 @@ from PIL import Image
 from matplotlib.colors import ListedColormap
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
-from charpar.linear import R_pi
+from oem.triangle_wave_functions import T_pi
 from matplotlib.ticker import MultipleLocator
 
 
@@ -47,7 +47,7 @@ theta_diff = []
 omega_diff = []
 
 for (true, fitted) in zip(delta_true, delta_tilde):
-    true = R_pi(true)  # Measurement range is [0,\pi], hence we need to calculate the respective true relative value
+    true = T_pi(true)  # Measurement range is [0,\pi], hence we need to calculate the respective true relative value
     Diff = abs(true-fitted)
     delta_diff.append(Diff)
 

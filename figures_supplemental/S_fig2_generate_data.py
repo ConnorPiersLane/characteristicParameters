@@ -4,8 +4,8 @@ import pickle
 import numpy as np
 import concurrent.futures
 
-from charpar.mueller_calculus import S_lin, XR
-from charpar.linear import MeasuredStokesParameters, calc_charparas
+from oem.mueller_calculus import linearly_polarized_light, optical_equivalent_model
+from oem.measurement_procedure import MeasuredStokesParameters, calculate_characteristic_parameters
 
 
 
@@ -29,9 +29,9 @@ for delta in deltas:
         true_values.append((delta, theta, omega))
 
         # Measured Stokes parameters
-        model = XR(delta=delta, theta=theta, omega=omega)
-        S_phi1 = model.dot(S_lin(phi_1))
-        S_phi2 = model.dot(S_lin(phi_2))
+        model = optical_equivalent_model(delta=delta, theta=theta, omega=omega)
+        S_phi1 = model.dot(linearly_polarized_light(phi_1))
+        S_phi2 = model.dot(linearly_polarized_light(phi_2))
 
         measured = MeasuredStokesParameters([phi_1, phi_2],
                                             [S_phi1[1], S_phi2[1]],
@@ -41,7 +41,7 @@ for delta in deltas:
 
 if __name__ == '__main__':
     with concurrent.futures.ProcessPoolExecutor(max_workers=10) as executor:
-        measured_values = list(executor.map(calc_charparas, measured_Stokes))
+        measured_values = list(executor.map(calculate_characteristic_parameters, measured_Stokes))
 
 
 
