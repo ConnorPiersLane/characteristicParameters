@@ -15,7 +15,7 @@ I recommend using the paper as a reference.
 """
 
 
-@dataclass()
+@dataclass
 class RetardationMeasurement:
     """
     Attributes:
@@ -103,7 +103,8 @@ class MeasuredRetardationsAtOneLocation:
         self.k_function: Callable[[float], float] = reduced_birefringence_function
 
     def __str__(self):
-        return f"Class {self.__class__.__name__} with reference wavelength {self.get_reference_wavelength()}"
+        return (f"Class {self.__class__.__name__}: reference wavelength {self.get_reference_wavelength()}, "
+                f"{len(self.all_measurements)} {RetardationMeasurement.__name__}")
 
     def get_reference_wavelength(self) -> float:
         return self.measurement_at_reference_wavelength.wavelength
@@ -146,7 +147,7 @@ class MultipleNeighboringLocations:
     @staticmethod
     def _check_if_all_have_the_same_reference_wavelength(neighboring_locations):
         reference_wavelengths = [location.get_reference_wavelength() for location in neighboring_locations]
-        return _helpers.all_equal(reference_wavelengths)
+        return _helpers.all_are_close(reference_wavelengths)
 
     def __init__(self, neighboring_locations: list[MeasuredRetardationsAtOneLocation]):
 

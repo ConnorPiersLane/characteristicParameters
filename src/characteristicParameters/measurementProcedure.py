@@ -61,6 +61,10 @@ class MeasuredStokesVector:
         else:
             self.S3 = None
 
+    def __str__(self):
+        return (f"{self.__class__.__name__}: "
+                f"Normalized: S1={self.get_S1_normalized()}, S2={self.get_S2_normalized()}")
+
     def get_S1_normalized(self):
         return self.S1 / self.S0
 
@@ -77,6 +81,9 @@ class MeasurementProcedure:
         """
 
         self.measured_stokes: list[MeasuredStokesVector] = measured_outgoing_stokes_parameters
+
+    def __str__(self):
+        return f"{self.__class__.__name__}: {len(self.measured_stokes)} {MeasuredStokesVector.__name__}"
 
     @staticmethod
     def S1_in_theory(phi, delta, theta, omega) -> float:

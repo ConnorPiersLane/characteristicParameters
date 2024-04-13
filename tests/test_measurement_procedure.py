@@ -4,7 +4,8 @@ import pytest
 
 from characteristicParameters.measurementProcedure import MeasurementProcedure, MeasuredStokesVector
 from characteristicParameters import muellerCalculus
-def test_MeasuredNormalizedStokesVector():
+
+def test_MeasuredStokesVector():
 
     # Test 1:
     stokes = MeasuredStokesVector(0, [2, 4, 6, 8])

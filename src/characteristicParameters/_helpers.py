@@ -3,7 +3,7 @@ import math
 class InvalidInputError(Exception):
     pass
 
-def all_equal(iterator):
+def all_are_close(iterator):
     iterator = iter(iterator)
     try:
         first = next(iterator)

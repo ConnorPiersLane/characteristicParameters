@@ -1,4 +1,4 @@
-from characteristicParameters._helpers import all_equal
+from characteristicParameters._helpers import all_are_close
 
 
 def test_all_equal():
@@ -8,5 +8,5 @@ def test_all_equal():
     list_to_be_tested_false = [1,2,3,1]
 
     # Act & Assert
-    assert all_equal(list_to_be_tested_true)
-    assert not all_equal(list_to_be_tested_false)
+    assert all_are_close(list_to_be_tested_true)
+    assert not all_are_close(list_to_be_tested_false)
