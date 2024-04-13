@@ -1,0 +1,22 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "characteristicParameters"
+version = "0.1.0"
+authors = [
+  {name="Connor Piers Lane"},
+]
+description = "Methods to determine the characterisitc parameters of an optically equivalent model based on measured Stokes parameters"
+readme = "README.md"
+requires-python = ">=3.11"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+Homepage = "https://github.com/ConnorPiersLane/characteristicParameters"
+Issues = "https://github.com/ConnorPiersLane/characteristicParameters/issues"
