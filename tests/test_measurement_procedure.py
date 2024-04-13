@@ -17,12 +17,13 @@ def test_MeasuredStokesVector():
     assert pytest.approx(2) == stokes.get_S1_normalized()
     assert pytest.approx(3) == stokes.get_S2_normalized()
 
-    # Test 1:
+    # Test 2:
     stokes = MeasuredStokesVector(math.pi, [2, 6, 8])
     assert pytest.approx(math.pi) == stokes.phi
     assert pytest.approx(3) == stokes.get_S1_normalized()
     assert pytest.approx(4) == stokes.get_S2_normalized()
     assert stokes.S3 is None
+
 
 def test_S1_in_theory():
     # This should give circularly polarized light and hence S1==0
@@ -40,25 +41,25 @@ def test_S2_in_theory():
     theta = 0
     assert pytest.approx(0) == MeasurementProcedure.S2_in_theory(phi=phi, delta=delta, theta=theta, omega=omega)
 
-def test_compare_with_Mueller_matrices():
+def test_comparison_with_Mueller_matrices():
 
     # Arrange:
-    # Define parameters:
+    # Define some random parameters:
     delta = math.pi/8
     omega = math.pi/5
     phi = math.pi/7
     theta = 23*math.pi/16
 
-    # Get the optically equivalent model
+    # Get the optically equivalent model from the mueller Calculus model
     S_in = muellerCalculus.linearly_polarized_light(phi)
     optical_equivalent_model=muellerCalculus.optical_equivalent_model(
         delta=delta, theta=theta, omega=omega
     )
-    S_out_oem = optical_equivalent_model @ S_in
+    S_out_expected = optical_equivalent_model @ S_in
 
-    # Act and Assert:
-    assert pytest.approx(S_out_oem[1]) == MeasurementProcedure.S1_in_theory(phi=phi, delta=delta, theta=theta, omega=omega)
-    assert pytest.approx(S_out_oem[2]) == MeasurementProcedure.S2_in_theory(phi=phi, delta=delta, theta=theta, omega=omega)
+    # Act and Assert: Compare
+    assert pytest.approx(S_out_expected[1]) == MeasurementProcedure.S1_in_theory(phi=phi, delta=delta, theta=theta, omega=omega)
+    assert pytest.approx(S_out_expected[2]) == MeasurementProcedure.S2_in_theory(phi=phi, delta=delta, theta=theta, omega=omega)
 
 
 def test_convert_theta_to_specified_range():
@@ -70,24 +71,28 @@ def test_convert_omega_to_specified_range():
     assert pytest.approx(0) == MeasurementProcedure.convert_omega_to_specified_range(3* math.pi)
 
 def test_residual_vector_r_and_residual_function_R():
-    # This should be a residuel vector and norm close to zero
+
+    # Test:
+    # Residual vector and residual function should be close to zero, as we will be inserting the "True" values
+
     # Arrange:
-    # Define parameters:
+    # Define random parameters:
     delta = math.pi/8
     omega = math.pi/5
     theta = 23*math.pi/16
 
+    # Generate two Stokes input vectors:
     phi_1 = 0
     phi_2 = math.pi/4
+    S_in_phi1 = muellerCalculus.linearly_polarized_light(phi_1)
+    S_in_phi2 = muellerCalculus.linearly_polarized_light(phi_2)
 
     # Get the optically equivalent model
     model=muellerCalculus.optical_equivalent_model(
         delta=delta, theta=theta, omega=omega
     )
 
-    S_in_phi1 = muellerCalculus.linearly_polarized_light(phi_1)
-    S_in_phi2 = muellerCalculus.linearly_polarized_light(phi_2)
-
+    # Calculate the measured output
     S_out_phi1 = np.matmul(model, S_in_phi1)
     S_out_phi2 = np.matmul(model, S_in_phi2)
 
@@ -96,8 +101,9 @@ def test_residual_vector_r_and_residual_function_R():
     OutgoingStokes2 = MeasuredStokesVector(phi=phi_2,
                                            stokes_vector=S_out_phi2)
 
+    # Initialized the class
     mp = MeasurementProcedure([OutgoingStokes1, OutgoingStokes2])
 
-    # insert the true values -> the residuals should be zero
+    # The residuals (as function of the parameters) should be zero when we enter the "true" parameters
     assert pytest.approx([0,0,0,0]) == mp.residual_vector_r(delta=delta, theta=theta, omega=omega)
     assert pytest.approx(0) == mp.residual_function_R(delta=delta, theta=theta, omega=omega)
