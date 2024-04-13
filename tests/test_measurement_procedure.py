@@ -9,17 +9,18 @@ def test_MeasuredNormalizedStokesVector():
     # Test 1:
     stokes = MeasuredStokesVector(0, [2, 4, 6, 8])
     assert pytest.approx(0) == stokes.phi
-    assert pytest.approx(1) == stokes.S0
-    assert pytest.approx(2) == stokes.S1
-    assert pytest.approx(3) == stokes.S2
-    assert pytest.approx(4) == stokes.S3
+    assert pytest.approx(2) == stokes.S0
+    assert pytest.approx(4) == stokes.S1
+    assert pytest.approx(6) == stokes.S2
+    assert pytest.approx(8) == stokes.S3
+    assert pytest.approx(2) == stokes.get_S1_normalized()
+    assert pytest.approx(3) == stokes.get_S2_normalized()
 
     # Test 1:
     stokes = MeasuredStokesVector(math.pi, [2, 6, 8])
     assert pytest.approx(math.pi) == stokes.phi
-    assert pytest.approx(1) == stokes.S0
-    assert pytest.approx(3) == stokes.S1
-    assert pytest.approx(4) == stokes.S2
+    assert pytest.approx(3) == stokes.get_S1_normalized()
+    assert pytest.approx(4) == stokes.get_S2_normalized()
     assert stokes.S3 is None
 
 def test_S1_in_theory():
@@ -48,8 +49,8 @@ def test_compare_with_Mueller_matrices():
     theta = 23*math.pi/16
 
     # Get the optically equivalent model
-    S_in = mueller_calculus.linearly_polarized_light(phi)
-    optical_equivalent_model=mueller_calculus.optical_equivalent_model(
+    S_in = muellerCalculus.linearly_polarized_light(phi)
+    optical_equivalent_model=muellerCalculus.optical_equivalent_model(
         delta=delta, theta=theta, omega=omega
     )
     S_out_oem = optical_equivalent_model @ S_in
@@ -79,12 +80,12 @@ def test_residual_vector_r_and_residual_function_R():
     phi_2 = math.pi/4
 
     # Get the optically equivalent model
-    model=mueller_calculus.optical_equivalent_model(
+    model=muellerCalculus.optical_equivalent_model(
         delta=delta, theta=theta, omega=omega
     )
 
-    S_in_phi1 = mueller_calculus.linearly_polarized_light(phi_1)
-    S_in_phi2 = mueller_calculus.linearly_polarized_light(phi_2)
+    S_in_phi1 = muellerCalculus.linearly_polarized_light(phi_1)
+    S_in_phi2 = muellerCalculus.linearly_polarized_light(phi_2)
 
     S_out_phi1 = np.matmul(model, S_in_phi1)
     S_out_phi2 = np.matmul(model, S_in_phi2)
