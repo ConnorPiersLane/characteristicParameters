@@ -21,16 +21,16 @@ k_function = rgb_method.define_reduced_birefringence_function(lambda_0=632.8, a=
 #
 def delta_g(delta_r: float) -> float:
     return rgb_method.convert_retardation_to_different_wavelength(k_function=k_function,
-                                                                  wavelength_old=l_r,
-                                                                  delta_old=delta_r,
-                                                                  wavelength_new=l_g)
+                                                                  wavelength_1=l_r,
+                                                                  delta_1=delta_r,
+                                                                  wavelength_2=l_g)
 
 
 def delta_b(delta_r: float) -> float:
     return rgb_method.convert_retardation_to_different_wavelength(k_function=k_function,
-                                                                  wavelength_old=l_r,
-                                                                  delta_old=delta_r,
-                                                                  wavelength_new=l_b)
+                                                                  wavelength_1=l_r,
+                                                                  delta_1=delta_r,
+                                                                  wavelength_2=l_b)
 
 
 # Plot the approximate relation
@@ -59,16 +59,16 @@ print(f"delta_r = {delta_r_2_tilde}")
 print(f"delta_g = {delta_g_2_tilde}")
 print(f"delta_b = {delta_b_2_tilde}")
 
-measurement1 = rgb_method.OneLocation(
-    lambda_delta_r=       rgb_method.LambdaAndDelta(wavelength=l_r, delta=delta_r_1_tilde),
-       additional_lambda_deltas=[rgb_method.LambdaAndDelta(wavelength=l_g, delta=delta_g_1_tilde),
-                                 rgb_method.LambdaAndDelta(wavelength=l_b, delta=delta_b_1_tilde)],
+measurement1 = rgb_method.MeasuredRetardationsAtOneLocation(
+    measurement_at_reference_wavelength=       rgb_method.RetardationMeasurement(wavelength=l_r, delta=delta_r_1_tilde),
+       additional_measurements=[rgb_method.RetardationMeasurement(wavelength=l_g, delta=delta_g_1_tilde),
+                                rgb_method.RetardationMeasurement(wavelength=l_b, delta=delta_b_1_tilde)],
     reduced_birefringence_function=k_function)
 
-measurement2 = rgb_method.OneLocation(
-    lambda_delta_r=        rgb_method.LambdaAndDelta(wavelength=l_r, delta=delta_r_2_tilde),
-    additional_lambda_deltas= [rgb_method.LambdaAndDelta(wavelength=l_g, delta=delta_g_2_tilde),
-                               rgb_method.LambdaAndDelta(wavelength=l_b, delta=delta_b_2_tilde)],
+measurement2 = rgb_method.MeasuredRetardationsAtOneLocation(
+    measurement_at_reference_wavelength=        rgb_method.RetardationMeasurement(wavelength=l_r, delta=delta_r_2_tilde),
+    additional_measurements= [rgb_method.RetardationMeasurement(wavelength=l_g, delta=delta_g_2_tilde),
+                              rgb_method.RetardationMeasurement(wavelength=l_b, delta=delta_b_2_tilde)],
     reduced_birefringence_function=k_function)
 
 

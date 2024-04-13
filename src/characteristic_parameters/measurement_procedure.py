@@ -32,7 +32,7 @@ class MeasuredCharacteristicParameters:
     omega: float
 
 
-class MeasuredNormalizedStokesParametersS1S2:
+class MeasuredNormalizedStokesVector:
     """
     This class refers to the measured outgoing Stokes Parameters used in section 2.2 "Measurement Procedure".
     Let the incident linearly polarized light be oriented at angle phi.
@@ -57,26 +57,32 @@ class MeasuredNormalizedStokesParametersS1S2:
         S2 = stokes_vector[2]
 
         # Normalize them and store them
+        self.S0 = 1
         self.S1 = S1 / S0
         self.S2 = S2 / S0
+
+        if len(stokes_vector) == 4:
+            self.S3 = stokes_vector[3] / S0
+        else:
+            self.S3 = None
 
 
 
 class MeasurementProcedure:
 
-    def __init__(self, measured_outgoing_stokes_parameters: list[MeasuredNormalizedStokesParametersS1S2]):
+    def __init__(self, measured_outgoing_stokes_parameters: list[MeasuredNormalizedStokesVector]):
         """
 
         Args:
             measured_outgoing_stokes_parameters: list containing instances of the MeasuredOutgoingStokesVector class
         """
 
-        self.measured_stokes: list[MeasuredNormalizedStokesParametersS1S2] = measured_outgoing_stokes_parameters
+        self.measured_stokes: list[MeasuredNormalizedStokesVector] = measured_outgoing_stokes_parameters
 
     @staticmethod
-    def outgoing_S1(phi, delta, theta, omega) -> float:
+    def S1_in_theory(phi, delta, theta, omega) -> float:
         """
-        See section 2.1 "Governing equations" S1(phi, delta, theta, omega)
+        See Eq. (8) in the paper
 
         Args:
             phi: [rad]
@@ -93,9 +99,9 @@ class MeasurementProcedure:
                       math.cos(B) * (1 - math.cos(delta)))
 
     @staticmethod
-    def outgoing_S2(phi, delta, theta, omega) -> float:
+    def S2_in_theory(phi, delta, theta, omega) -> float:
         """
-        See section 2.1 "Governing equations" S2(phi, delta, theta, omega)
+        See Eq. (9) in the paper
 
         Args:
             phi: [rad]
@@ -112,7 +118,7 @@ class MeasurementProcedure:
                       math.sin(B) * (1 - math.cos(delta)))
 
     @staticmethod
-    def get_theta_within_specified_range(theta: float) -> float:
+    def convert_theta_to_specified_range(theta: float) -> float:
         """
         In section 2.3 the measurement range for theta was specified as [0, pi/2).
         Because theta can be periodically continued, it is possible to use the boundaries [0, pi]
@@ -126,13 +132,10 @@ class MeasurementProcedure:
         Returns: measured value in the range [0, pi/2)
 
         """
-        if math.isclose(theta, math.pi / 2):
-            return 0
-        else:
-            return theta % (math.pi / 2)
+        return theta % (math.pi / 2)
 
     @staticmethod
-    def get_omega_within_specified_range(omega: float) -> float:
+    def convert_omega_to_specified_range(omega: float) -> float:
         """
         In section 2.3 the measurement range for omega was specified as [0, pi).
         Because omega can be periodically continued, it is possible to use the boundaries [0, 2pi]
@@ -146,10 +149,7 @@ class MeasurementProcedure:
         Returns: measured value in the range [0, pi/2)
 
         """
-        if math.isclose(omega, math.pi):
-            return 0
-        else:
-            return omega % math.pi
+        return omega % math.pi
 
     def residual_vector_r(self, delta: float, theta: float, omega: float) -> list[float]:
         """
@@ -159,11 +159,11 @@ class MeasurementProcedure:
 
         for measurement in self.measured_stokes:
             residual_vector.append(
-                measurement.S1 - MeasurementProcedure.outgoing_S1(phi=measurement.phi,
-                                                                  delta=delta, theta=theta, omega=omega))
+                measurement.S1 - MeasurementProcedure.S1_in_theory(phi=measurement.phi,
+                                                                   delta=delta, theta=theta, omega=omega))
             residual_vector.append(
-                measurement.S2 - MeasurementProcedure.outgoing_S2(phi=measurement.phi,
-                                                                  delta=delta, theta=theta, omega=omega))
+                measurement.S2 - MeasurementProcedure.S2_in_theory(phi=measurement.phi,
+                                                                   delta=delta, theta=theta, omega=omega))
 
         return residual_vector
 
@@ -210,8 +210,8 @@ class MeasurementProcedure:
                                                  strategy=strategy)
 
         delta_tilde = result.x[0]
-        theta_tilde = MeasurementProcedure.get_theta_within_specified_range(result.x[1])
-        omega_tilde = MeasurementProcedure.get_omega_within_specified_range(result.x[2])
+        theta_tilde = MeasurementProcedure.convert_theta_to_specified_range(result.x[1])
+        omega_tilde = MeasurementProcedure.convert_omega_to_specified_range(result.x[2])
 
         return MeasuredCharacteristicParameters(delta=delta_tilde,
                                                 theta=theta_tilde,

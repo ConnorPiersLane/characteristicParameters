@@ -3,7 +3,7 @@ import pickle
 import numpy as np
 import concurrent.futures
 
-from characteristic_parameters.measurement_procedure import MeasurementProcedure, MeasuredNormalizedStokesParametersS1S2
+from characteristic_parameters.measurement_procedure import MeasurementProcedure, MeasuredNormalizedStokesVector
 from characteristic_parameters.mueller_calculus import linearly_polarized_light, optical_equivalent_model
 
 # Settings
@@ -39,10 +39,10 @@ for delta in deltas:
         S_out_phi1 = np.matmul(model, S_in_phi1)
         S_out_phi2 = np.matmul(model, S_in_phi2)
 
-        OutgoingStokes1 = MeasuredNormalizedStokesParametersS1S2(phi=phi_1,
-                                                                 stokes_vector=S_out_phi1)
-        OutgoingStokes2 = MeasuredNormalizedStokesParametersS1S2(phi=phi_2,
-                                                                 stokes_vector=S_out_phi2)
+        OutgoingStokes1 = MeasuredNormalizedStokesVector(phi=phi_1,
+                                                         stokes_vector=S_out_phi1)
+        OutgoingStokes2 = MeasuredNormalizedStokesVector(phi=phi_2,
+                                                         stokes_vector=S_out_phi2)
         measurements.append(MeasurementProcedure([OutgoingStokes1, OutgoingStokes2]))
 
 # Define a function that can be run parallel:
@@ -55,8 +55,8 @@ if __name__ == '__main__':
     with concurrent.futures.ProcessPoolExecutor(max_workers=12) as executor:
         measured_values = list(executor.map(find_parameters_parallel, measurements))
 
-    with open("data/measured_values_fig3.pickle", "wb") as handle:
+    with open("data/measured_values_fig4.pickle", "wb") as handle:
         pickle.dump(measured_values, handle)
 
-    with open("data/true_values_fig3.pickle", "wb") as handle:
+    with open("data/true_values_fig4.pickle", "wb") as handle:
         pickle.dump(true_values, handle)

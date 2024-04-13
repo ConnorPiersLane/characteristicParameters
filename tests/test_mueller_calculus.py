@@ -1,5 +1,6 @@
 import math
 
+import numpy as np
 import pytest
 
 import characteristic_parameters
@@ -27,14 +28,49 @@ def test_hand_circularly_polarized_light():
     for (S_is, S_should) in zip(rh_stokes, [1, 0, 0, 1]):
         assert pytest.approx(S_is) == S_should
 
-def test_oem():
+def test_rotator():
+    # Arrange: Rotator that rotates 45°
+    R = characteristic_parameters.mueller_calculus.rotator(math.pi/4)
+
+    # Test 1
+    S_in1 = [1,1,0,0]
+    S_out_expected1 = [1,0,1,0]
+    # Test 2
+    S_in2 = [1,0,0,-1]
+    S_out_expected2 = [1, 0, 0, -1]
+
+    # Act and Assert
+    assert pytest.approx(S_out_expected1) == list(np.matmul(R, S_in1))
+    assert pytest.approx(S_out_expected2) == list(np.matmul(R, S_in2))
+
+def test_linear_retarder():
+
+    # Test 1
+    # Linearly polarized light entering a quarter wave plate should lead to circulalry polarized light
+    LR = characteristic_parameters.mueller_calculus.linear_retarder(delta=math.pi/2, theta=0)
+    S_in_45 = [1, 0, 1, 0]
+    S_out_expected = [1, 0, 0, -1]
+    pytest.approx(S_out_expected) == list(np.matmul(LR, S_in_45))
+
+    # Test 2
+    # Linearly polarized light entering a half wave plate should lead to linear polarized light
+    S_in_45 = [1, 0, 1, 0]
+    S_out_expected = [1, 0, -1, 0]
+    pytest.approx(S_out_expected) == list(np.matmul(LR, S_in_45))
+
+def test_optical_equivalent_model():
     # Arrange: this should result in circulalry polarized light:
     S_in = characteristic_parameters.mueller_calculus.linearly_polarized_light(0)
-    rotator = characteristic_parameters.mueller_calculus.rotator(math.pi / 16)
-    retarder = characteristic_parameters.mueller_calculus.linear_retarder(delta=math.pi / 2, theta=math.pi / 4 + math.pi / 16)
+    delta = math.pi / 2
+    theta = math.pi / 4 + math.pi / 16
+    omega = math.pi / 16
+
+    optical_eq_model = characteristic_parameters.mueller_calculus.optical_equivalent_model(
+        delta=delta, theta=theta, omega=omega
+    )
 
     # Act
-    S_out = retarder @ rotator @ S_in
+    S_out = optical_eq_model @ S_in
 
     # Assert
     for (S_is, S_should) in zip(S_out, [1, 0, 0, 1]):

@@ -10,10 +10,10 @@ plt.rcParams.update(rc)
 plt.rcParams["font.serif"] = ["Times New Roman"] + plt.rcParams["font.serif"]
 
 # If not available, run fig4_generate_data.py first:
-with open('data/measured_values_fig3.pickle', 'rb') as handle:
+with open('data/measured_values_fig4.pickle', 'rb') as handle:
     measured_values = pickle.load(handle)
 
-with open('data/true_values_fig3.pickle', 'rb') as handle:
+with open('data/true_values_fig4.pickle', 'rb') as handle:
     true_values = pickle.load(handle)
 
 X_delta = []
