@@ -5,8 +5,8 @@ from typing import Callable
 import numpy as np
 from scipy import optimize
 
-from characteristic_parameters import _helpers
-from characteristic_parameters.triangle_wave_functions import T_pi
+from characteristicParameters import _helpers
+from characteristicParameters.triangle_wave_functions import T_pi
 
 """
 Important:

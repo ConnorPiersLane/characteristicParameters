@@ -2,8 +2,8 @@ import numpy as np
 import math
 import matplotlib.pyplot as plt
 
-from characteristic_parameters.triangle_wave_functions import T_pi
-from characteristic_parameters import rgb_method
+from characteristicParameters.triangle_wave_functions import T_pi
+from characteristicParameters import rgbMethod
 
 rc = {"font.family": "serif",
       "mathtext.fontset": "stix"}

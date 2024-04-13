@@ -1,4 +1,4 @@
-from characteristic_parameters._helpers import all_equal
+from characteristicParameters._helpers import all_equal
 
 
 def test_all_equal():

@@ -3,7 +3,7 @@ import math
 import numpy as np
 import pytest
 
-import characteristic_parameters
+import characteristicParameters
 
 def test_linearly_polarized_light():
     # Arrange
@@ -11,8 +11,8 @@ def test_linearly_polarized_light():
     phi2 = math.pi/4
 
     # Act
-    stokes_1 = characteristic_parameters.mueller_calculus.linearly_polarized_light(phi1)
-    stokes_2 = characteristic_parameters.mueller_calculus.linearly_polarized_light(phi2)
+    stokes_1 = characteristicParameters.mueller_calculus.linearly_polarized_light(phi1)
+    stokes_2 = characteristicParameters.mueller_calculus.linearly_polarized_light(phi2)
 
     # Assert
     for (S_is, S_should) in zip(stokes_1, [1, 1, 0, 0]):
@@ -22,7 +22,7 @@ def test_linearly_polarized_light():
 
 def test_hand_circularly_polarized_light():
     # Act:
-    rh_stokes = characteristic_parameters.mueller_calculus.right_hand_circularly_polarized_light()
+    rh_stokes = characteristicParameters.mueller_calculus.right_hand_circularly_polarized_light()
 
     # Assert
     for (S_is, S_should) in zip(rh_stokes, [1, 0, 0, 1]):
@@ -30,7 +30,7 @@ def test_hand_circularly_polarized_light():
 
 def test_rotator():
     # Arrange: Rotator that rotates 45°
-    R = characteristic_parameters.mueller_calculus.rotator(math.pi/4)
+    R = characteristicParameters.mueller_calculus.rotator(math.pi / 4)
 
     # Test 1
     S_in1 = [1,1,0,0]
@@ -47,7 +47,7 @@ def test_linear_retarder():
 
     # Test 1
     # Linearly polarized light entering a quarter wave plate should lead to circulalry polarized light
-    LR = characteristic_parameters.mueller_calculus.linear_retarder(delta=math.pi/2, theta=0)
+    LR = characteristicParameters.mueller_calculus.linear_retarder(delta=math.pi / 2, theta=0)
     S_in_45 = [1, 0, 1, 0]
     S_out_expected = [1, 0, 0, -1]
     pytest.approx(S_out_expected) == list(np.matmul(LR, S_in_45))
@@ -60,12 +60,12 @@ def test_linear_retarder():
 
 def test_optical_equivalent_model():
     # Arrange: this should result in circulalry polarized light:
-    S_in = characteristic_parameters.mueller_calculus.linearly_polarized_light(0)
+    S_in = characteristicParameters.mueller_calculus.linearly_polarized_light(0)
     delta = math.pi / 2
     theta = math.pi / 4 + math.pi / 16
     omega = math.pi / 16
 
-    optical_eq_model = characteristic_parameters.mueller_calculus.optical_equivalent_model(
+    optical_eq_model = characteristicParameters.mueller_calculus.optical_equivalent_model(
         delta=delta, theta=theta, omega=omega
     )
 

@@ -3,8 +3,8 @@ import pickle
 import numpy as np
 import concurrent.futures
 
-from characteristic_parameters.measurement_procedure import MeasurementProcedure, MeasuredNormalizedStokesVector
-from characteristic_parameters.mueller_calculus import linearly_polarized_light, optical_equivalent_model
+from characteristicParameters.measurementProcedure import MeasurementProcedure, MeasuredNormalizedStokesVector
+from characteristicParameters.muellerCalculus import linearly_polarized_light, optical_equivalent_model
 
 # Settings
 stepsize = math.radians(45)

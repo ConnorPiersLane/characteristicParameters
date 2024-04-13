@@ -2,8 +2,8 @@ import math
 import numpy as np
 import pytest
 
-from characteristic_parameters.measurement_procedure import MeasurementProcedure, MeasuredNormalizedStokesVector
-from characteristic_parameters import mueller_calculus
+from characteristicParameters.measurementProcedure import MeasurementProcedure, MeasuredNormalizedStokesVector
+from characteristicParameters import muellerCalculus
 def test_MeasuredNormalizedStokesVector():
 
     # Test 1:
