@@ -1,4 +1,5 @@
 import math
+import os.path
 import pickle
 import matplotlib.pyplot as plt
 import numpy as np
@@ -6,7 +7,7 @@ from PIL import Image
 from matplotlib.colors import ListedColormap
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
-from oem.triangle_wave_functions import T_pi
+from characteristic_parameters.triangle_wave_functions import T_pi
 from matplotlib.ticker import MultipleLocator
 
 
@@ -15,10 +16,10 @@ rc = {"font.family": "serif",
 plt.rcParams.update(rc)
 plt.rcParams["font.serif"] = ["Times New Roman"] + plt.rcParams["font.serif"]
 
-with open('S_fig2_measured_values.pickle', 'rb') as handle:
+with open(os.path.join('data','S_fig2_measured_values.pickle'), 'rb') as handle:
     measured_values = pickle.load(handle)
 
-with open('S_fig2_true_values.pickle', 'rb') as handle:
+with open(os.path.join('data','S_fig2_true_values.pickle'), 'rb') as handle:
     true_values = pickle.load(handle)
 
 

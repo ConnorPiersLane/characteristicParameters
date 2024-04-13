@@ -3,11 +3,11 @@ import pickle
 import numpy as np
 import concurrent.futures
 
-from oem.measurement_procedure import MeasurementProcedure, MeasuredNormalizedStokesParametersS1S2
-from oem.mueller_calculus import linearly_polarized_light, optical_equivalent_model
+from characteristic_parameters.measurement_procedure import MeasurementProcedure, MeasuredNormalizedStokesParametersS1S2
+from characteristic_parameters.mueller_calculus import linearly_polarized_light, optical_equivalent_model
 
 # Settings
-stepsize = math.radians(1)
+stepsize = math.radians(45)
 # y-axis
 omegas = np.arange(0, math.pi + stepsize / 2, stepsize)
 # x-axis
@@ -85,26 +85,27 @@ def find_parameters_4(measurement: MeasurementProcedure) -> (float, float, float
 
 if __name__ == '__main__':
     with concurrent.futures.ProcessPoolExecutor(max_workers=12) as executor:
+        pass
         # 1
         measured_values = list(executor.map(find_parameters_1, measurements))
-        with open("S_fig1_measured_values_1.pickle", "wb") as handle:
+        with open("data/S_fig1_measured_values_1_new.pickle", "wb") as handle:
             pickle.dump(measured_values, handle)
 
-        #
-        # # 2
-        # measured_values = list(executor.map(find_parameters_2, measurements))
-        # with open("S_fig1_measured_values_2.pickle", "wb") as handle:
-        #     pickle.dump(measured_values, handle)
-        #
-        # # 3
-        # measured_values = list(executor.map(find_parameters_3, measurements))
-        # with open("S_fig1_measured_values_3.pickle", "wb") as handle:
-        #     pickle.dump(measured_values, handle)
-        #
-        # # 4
-        # measured_values = list(executor.map(find_parameters_4, measurements))
-        # with open("S_fig1_measured_values_4.pickle", "wb") as handle:
-        #     pickle.dump(measured_values, handle)
 
-    with open("S_fig1_true_values.pickle", "wb") as handle:
+        # 2
+        measured_values = list(executor.map(find_parameters_2, measurements))
+        with open("data/S_fig1_measured_values_2_new.pickle", "wb") as handle:
+            pickle.dump(measured_values, handle)
+
+        # 3
+        measured_values = list(executor.map(find_parameters_3, measurements))
+        with open("data/S_fig1_measured_values_3_new.pickle", "wb") as handle:
+            pickle.dump(measured_values, handle)
+
+        # 4
+        measured_values = list(executor.map(find_parameters_4, measurements))
+        with open("data/S_fig1_measured_values_4_new.pickle", "wb") as handle:
+            pickle.dump(measured_values, handle)
+
+    with open("data/S_fig1_true_values_new.pickle", "wb") as handle:
         pickle.dump(true_values, handle)

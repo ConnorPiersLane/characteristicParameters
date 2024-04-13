@@ -1,4 +1,5 @@
 import math
+import os
 import pickle
 import matplotlib.pyplot as plt
 import numpy as np
@@ -6,7 +7,7 @@ from PIL import Image
 from matplotlib.colors import ListedColormap
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
-from oem.triangle_wave_functions import T_pi
+from characteristic_parameters.triangle_wave_functions import T_pi
 from matplotlib.ticker import MultipleLocator
 
 
@@ -26,11 +27,13 @@ eps = np.finfo(float).eps
 leps = math.log10(eps)
 
 for i in (1,2,3,4):
-    with open(f'S_fig1_measured_values_{i}_L2norm.pickle', 'rb') as handle:
+
+    with open(os.path.join('data',f'S_fig1_measured_values_{i}_L2norm.pickle'), 'rb') as handle:
         measured_values = pickle.load(handle)
 
-    with open('S_fig1_true_values.pickle', 'rb') as handle:
+    with open(os.path.join('data','S_fig1_true_values.pickle'), 'rb') as handle:
         true_values = pickle.load(handle)
+
 
 
     ncol = 181  # because stepsize was 1° including omega=0° and omega=180°
