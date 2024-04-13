@@ -3,7 +3,7 @@ import pickle
 import numpy as np
 import concurrent.futures
 
-from characteristicParameters.measurementProcedure import MeasurementProcedure, MeasuredNormalizedStokesVector
+from characteristicParameters.measurementProcedure import MeasurementProcedure, MeasuredStokesVector
 from characteristicParameters.muellerCalculus import linearly_polarized_light, optical_equivalent_model
 
 # Settings
@@ -37,10 +37,10 @@ for delta in deltas:
         S_out_phi1 = np.matmul(model, S_in_phi1)
         S_out_phi2 = np.matmul(model, S_in_phi2)
 
-        OutgoingStokes1 = MeasuredNormalizedStokesVector(phi=phi_1,
-                                                         stokes_vector=S_out_phi1)
-        OutgoingStokes2 = MeasuredNormalizedStokesVector(phi=phi_2,
-                                                         stokes_vector=S_out_phi2)
+        OutgoingStokes1 = MeasuredStokesVector(phi=phi_1,
+                                               stokes_vector=S_out_phi1)
+        OutgoingStokes2 = MeasuredStokesVector(phi=phi_2,
+                                               stokes_vector=S_out_phi2)
         measurements.append(MeasurementProcedure([OutgoingStokes1, OutgoingStokes2]))
 
 

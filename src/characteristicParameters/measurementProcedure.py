@@ -32,7 +32,7 @@ class MeasuredCharacteristicParameters:
     omega: float
 
 
-class MeasuredNormalizedStokesVector:
+class MeasuredStokesVector:
     """
     This class refers to the measured outgoing Stokes Parameters used in section 2.2 "Measurement Procedure".
     Let the incident linearly polarized light be oriented at angle phi.
@@ -45,39 +45,38 @@ class MeasuredNormalizedStokesVector:
         """
 
         Args:
-            phi: orientation angle of the incident linearly polarized light
-            stokes_vector: Stokes vector [S0, S1, S2, S3] or [S0, S1, S2]
+            phi: [rad] orientation angle of the incident linearly polarized light
+            stokes_vector: Stokes vector [S0, S1, S2, S3] or [S0, S1, S2], not necessarily normalized
         """
 
         self.phi = phi
 
         # Not normalized Stokes parameters
-        S0 = stokes_vector[0]
-        S1 = stokes_vector[1]
-        S2 = stokes_vector[2]
-
-        # Normalize them and store them
-        self.S0 = 1
-        self.S1 = S1 / S0
-        self.S2 = S2 / S0
+        self.S0 = stokes_vector[0]
+        self.S1 = stokes_vector[1]
+        self.S2 = stokes_vector[2]
 
         if len(stokes_vector) == 4:
-            self.S3 = stokes_vector[3] / S0
+            self.S3 = stokes_vector[3]
         else:
             self.S3 = None
 
+    def get_S1_normalized(self):
+        return self.S1 / self.S0
 
+    def get_S2_normalized(self):
+        return self.S2 / self.S0
 
 class MeasurementProcedure:
 
-    def __init__(self, measured_outgoing_stokes_parameters: list[MeasuredNormalizedStokesVector]):
+    def __init__(self, measured_outgoing_stokes_parameters: list[MeasuredStokesVector]):
         """
 
         Args:
             measured_outgoing_stokes_parameters: list containing instances of the MeasuredOutgoingStokesVector class
         """
 
-        self.measured_stokes: list[MeasuredNormalizedStokesVector] = measured_outgoing_stokes_parameters
+        self.measured_stokes: list[MeasuredStokesVector] = measured_outgoing_stokes_parameters
 
     @staticmethod
     def S1_in_theory(phi, delta, theta, omega) -> float:
@@ -159,10 +158,10 @@ class MeasurementProcedure:
 
         for measurement in self.measured_stokes:
             residual_vector.append(
-                measurement.S1 - MeasurementProcedure.S1_in_theory(phi=measurement.phi,
+                measurement.get_S1_normalized() - MeasurementProcedure.S1_in_theory(phi=measurement.phi,
                                                                    delta=delta, theta=theta, omega=omega))
             residual_vector.append(
-                measurement.S2 - MeasurementProcedure.S2_in_theory(phi=measurement.phi,
+                measurement.get_S2_normalized() - MeasurementProcedure.S2_in_theory(phi=measurement.phi,
                                                                    delta=delta, theta=theta, omega=omega))
 
         return residual_vector

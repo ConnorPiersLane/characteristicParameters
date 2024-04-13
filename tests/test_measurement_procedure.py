@@ -2,12 +2,12 @@ import math
 import numpy as np
 import pytest
 
-from characteristicParameters.measurementProcedure import MeasurementProcedure, MeasuredNormalizedStokesVector
+from characteristicParameters.measurementProcedure import MeasurementProcedure, MeasuredStokesVector
 from characteristicParameters import muellerCalculus
 def test_MeasuredNormalizedStokesVector():
 
     # Test 1:
-    stokes = MeasuredNormalizedStokesVector(0, [2,4,6,8])
+    stokes = MeasuredStokesVector(0, [2, 4, 6, 8])
     assert pytest.approx(0) == stokes.phi
     assert pytest.approx(1) == stokes.S0
     assert pytest.approx(2) == stokes.S1
@@ -15,7 +15,7 @@ def test_MeasuredNormalizedStokesVector():
     assert pytest.approx(4) == stokes.S3
 
     # Test 1:
-    stokes = MeasuredNormalizedStokesVector(math.pi, [2,6,8])
+    stokes = MeasuredStokesVector(math.pi, [2, 6, 8])
     assert pytest.approx(math.pi) == stokes.phi
     assert pytest.approx(1) == stokes.S0
     assert pytest.approx(3) == stokes.S1
@@ -89,10 +89,10 @@ def test_residual_vector_r_and_residual_function_R():
     S_out_phi1 = np.matmul(model, S_in_phi1)
     S_out_phi2 = np.matmul(model, S_in_phi2)
 
-    OutgoingStokes1 = MeasuredNormalizedStokesVector(phi=phi_1,
-                                                     stokes_vector=S_out_phi1)
-    OutgoingStokes2 = MeasuredNormalizedStokesVector(phi=phi_2,
-                                                     stokes_vector=S_out_phi2)
+    OutgoingStokes1 = MeasuredStokesVector(phi=phi_1,
+                                           stokes_vector=S_out_phi1)
+    OutgoingStokes2 = MeasuredStokesVector(phi=phi_2,
+                                           stokes_vector=S_out_phi2)
 
     mp = MeasurementProcedure([OutgoingStokes1, OutgoingStokes2])
 
