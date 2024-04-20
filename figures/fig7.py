@@ -4,16 +4,19 @@ from figures import pi_axis_plotter
 
 
 dx = 0.01
+
 x = np.arange(20 * np.pi, 24 * np.pi+dx/2, dx)
 y = np.arange(20*np.pi, 24 * np.pi+dx/2, dx)
 X, Y = np.meshgrid(x, y)
 Z = np.array([[L([xx, yy]) for xx in x] for yy in y])
 
+print(L([deltas_found[0], deltas_found[1]]))
+
 dl = math.pi/4
 levels = np.arange(0, 3 * np.pi+dl/2, dl)
 
 fig, ax = plt.subplots(figsize=(6,4))
-CS = ax.contourf(X, Y, Z, levels=levels, cmap="viridis_r", extend="max")
+CS = ax.contourf(X, Y, Z, levels=levels, cmap="viridis", extend="max")
 
 ax.set_aspect(1.0)
 
