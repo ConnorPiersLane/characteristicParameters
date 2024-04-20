@@ -104,8 +104,8 @@ if __name__ == '__main__':
 
         # 4
         measured_values = list(executor.map(find_parameters_4, measurements))
-        with open("data/S_fig1_measured_values_4_new.pickle", "wb") as handle:
+        with open("../figures_supplemental/data/S_fig1_measured_values_4_new.pickle", "wb") as handle:
             pickle.dump(measured_values, handle)
 
-    with open("data/S_fig1_true_values_new.pickle", "wb") as handle:
+    with open("../figures_supplemental/data/S_fig1_true_values_new.pickle", "wb") as handle:
         pickle.dump(true_values, handle)
