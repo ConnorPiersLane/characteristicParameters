@@ -78,10 +78,19 @@ for ax in (ax1, ax2, ax3):
       ax.yaxis.set_major_locator(plt.MultipleLocator(np.pi / 2))
       ax.yaxis.set_minor_locator(plt.MultipleLocator(np.pi / 4))
       ax.yaxis.set_major_formatter(plt.FuncFormatter(pi_axis_plotter.multiple_formatter(2)))
-      ax.set_ylabel(r'$\tilde{\delta}$', fontsize=12)
+      ax.set_ylabel(r'$\tilde{\delta}_{r,g,b}$', fontsize=12)
 
       ax.set_ylim([0, math.pi])
 ax3.set_xlabel(r'$\delta_r$', fontsize=12)
+
+ax1.text(-0.12, 1.2, "(a)", transform=ax1.transAxes,
+        size=12, weight='bold')
+ax2.text(-0.12, 1.2, "(b)", transform=ax2.transAxes,
+        size=12, weight='bold')
+ax3.text(-0.12, 1.2, "(c)", transform=ax3.transAxes,
+        size=12, weight='bold')
+
+
 #
 # ax1.plot([6*math.pi, 6*math.pi], [0, math.pi], color="black", linestyle='solid', linewidth=1.5)
 # # ax2.plot([12*math.pi, 12*math.pi], [0, math.pi], color="black", linestyle='dotted', linewidth=1.5)
@@ -92,7 +101,7 @@ ax1.legend()
 
 
 
-ax1.legend( ncol=3, loc=(0.05, 1.05), fontsize=10)
+ax1.legend( ncol=3, loc=(0.05, 1.3), fontsize=10)
 
 plt.subplots_adjust(wspace=0, hspace=0)
 plt.savefig('Fig5.tiff', format='tiff', dpi=2000, bbox_inches='tight')

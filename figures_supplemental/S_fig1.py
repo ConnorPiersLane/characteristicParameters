@@ -106,7 +106,7 @@ for i in (1,2,3,4):
 
 fig, axes = plt.subplots(3, 4, sharex=False, figsize=(9,6))
 
-cmap = "gnuplot"
+cmap = "inferno"
 
 img11 = axes[0][0].imshow(delta_img_all[0],  cmap=cmap, interpolation=None, vmin=0, vmax=255)
 img12 = axes[0][1].imshow(delta_img_all[1],  cmap=cmap, interpolation=None, vmin=0, vmax=255)
@@ -139,7 +139,6 @@ for rows in axes:
         # ax.xaxis.set_ticklabels(["", r""])
 
 
-
 for rows in axes:
     rows[0].set_yticks((0, 180))
     rows[0].yaxis.set_minor_locator(MultipleLocator(90))
@@ -170,17 +169,17 @@ for rows in axes:
     #     cbar = fig.colorbar(img31, cax=cax, orientation='vertical', ticks=[0, 127, 255])
     #     cbar.set_label(r"$1-\frac{\lg\Delta_{\omega}}{\lg\epsilon}$", fontsize=14)
     if i == 1:
-        cbar = fig.colorbar(img11, cax=cax, orientation='vertical', ticks=[0, 127, 255])
+        cbar = fig.colorbar(img11, cax=cax, orientation='vertical', ticks=[0, 127, 255], extend="min")
         cbar.set_label(r"$\Delta D_\delta$", fontsize=12)
     elif i == 2:
-        cbar = fig.colorbar(img21, cax=cax, orientation='vertical', ticks=[0, 127, 255])
-        cbar.set_label(r"$\Delta D_\omega$", fontsize=12)
+        cbar = fig.colorbar(img21, cax=cax, orientation='vertical', ticks=[0, 127, 255], extend="min")
+        cbar.set_label(r"$\Delta D_\theta$", fontsize=12)
     elif i == 3:
-        cbar = fig.colorbar(img31, cax=cax, orientation='vertical', ticks=[0, 127, 255])
-        cbar.set_label(r"$\Delta D_\epsilon$", fontsize=12)
+        cbar = fig.colorbar(img31, cax=cax, orientation='vertical', ticks=[0, 127, 255], extend="min")
+        cbar.set_label(r"$\Delta D_\omega$", fontsize=12)
 
     cbar.ax.invert_yaxis()
-    cbar.ax.set_yticklabels(['1<', '0.5', '0'], fontsize=12)
+    cbar.ax.set_yticklabels(['1', '0.5', '0'], fontsize=12)
 
     i = i + 1
 
