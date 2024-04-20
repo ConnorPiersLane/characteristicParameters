@@ -16,10 +16,10 @@ rc = {"font.family": "serif",
 plt.rcParams.update(rc)
 plt.rcParams["font.serif"] = ["Times New Roman"] + plt.rcParams["font.serif"]
 
-with open(os.path.join('data','S_fig2_measured_values.pickle'), 'rb') as handle:
+with open(os.path.join('../data', 'S_fig2_measured_values.pickle'), 'rb') as handle:
     measured_values = pickle.load(handle)
 
-with open(os.path.join('data','S_fig2_true_values.pickle'), 'rb') as handle:
+with open(os.path.join('../data', 'S_fig2_true_values.pickle'), 'rb') as handle:
     true_values = pickle.load(handle)
 
 
