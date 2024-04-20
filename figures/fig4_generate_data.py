@@ -7,15 +7,15 @@ from characteristicParameters.measurementProcedure import MeasurementProcedure, 
 from characteristicParameters.muellerCalculus import linearly_polarized_light, optical_equivalent_model
 
 # Settings
-stepsize = math.radians(30)
-# x-axis
-deltas = np.arange(0, 2 * math.pi + stepsize / 2, stepsize)
+stepsize = math.radians(1)
 # y-axis
 omegas = np.arange(0, math.pi + stepsize / 2, stepsize)
+# x-axis
+deltas = np.arange(0, 6*math.pi + stepsize / 2, stepsize)
 
 # Two orientations angles for the incident linearly polarized light:
 phi_1 = 0
-phi_2 = math.pi / 4
+phi_2 = math.radians(45)
 
 # Store the values here:
 true_values = []  # true characteristic values
@@ -24,13 +24,11 @@ measured_values = []  # measured characteristic values
 
 for delta in deltas:
     for omega in omegas:
-        theta = delta / 2  # Set theta
+        theta = delta / 6
 
-        # Store the true values
         true_values.append((delta, theta, omega))
 
-        # Calculate the outgoing Stokes parameters
-        # Define the optical model:
+        # Measured Stokes parameters
         model = optical_equivalent_model(delta=delta, theta=theta, omega=omega)
         # Incident light:
         S_in_phi1 = linearly_polarized_light(phi_1)
@@ -45,18 +43,26 @@ for delta in deltas:
                                                stokes_vector=S_out_phi2)
         measurements.append(MeasurementProcedure([OutgoingStokes1, OutgoingStokes2]))
 
+
 # Define a function that can be run parallel:
-def find_parameters_parallel(measurement: MeasurementProcedure) -> (float, float, float):
-    parameters = measurement.find_characteristic_parameters()
+def find_parameters_4(measurement: MeasurementProcedure) -> (float, float, float):
+    parameters = measurement.find_characteristic_parameters(
+        lb_delta=0, ub_delta=math.pi,
+        lb_theta=0, ub_theta=math.pi,
+        lb_omega=0, ub_omega=2 * math.pi,
+        strategy="rand1exp"
+    )
     return parameters.delta, parameters.theta, parameters.omega
 
-# the next line of codes needs to be there so the ProcessPoolExecutor can run parallel on windows
+
+
 if __name__ == '__main__':
     with concurrent.futures.ProcessPoolExecutor(max_workers=12) as executor:
-        measured_values = list(executor.map(find_parameters_parallel, measurements))
 
-    with open("data/measured_values_fig4.pickle", "wb") as handle:
-        pickle.dump(measured_values, handle)
+        # 4
+        measured_values = list(executor.map(find_parameters_4, measurements))
+        with open("/data/fig4_measured_values_new.pickle", "wb") as handle:
+            pickle.dump(measured_values, handle)
 
-    with open("data/true_values_fig4.pickle", "wb") as handle:
+    with open("/data/fig4_true_values_new.pickle", "wb") as handle:
         pickle.dump(true_values, handle)

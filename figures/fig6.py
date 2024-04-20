@@ -16,18 +16,18 @@ l_g = 546.1
 l_b = 435.8
 
 # Eq. (4) in the Paper
-k_function = rgb_method.define_reduced_birefringence_function(lambda_0=632.8, a=25.5e3, b=3.25e9)
+k_function = rgbMethod.define_reduced_birefringence_function(lambda_0=632.8, a=25.5e3, b=3.25e9)
 
 #
 def delta_g(delta_r: float) -> float:
-    return rgb_method.convert_retardation_to_different_wavelength(k_function=k_function,
+    return rgbMethod.convert_retardation_to_different_wavelength(k_function=k_function,
                                                                   wavelength_1=l_r,
                                                                   delta_1=delta_r,
                                                                   wavelength_2=l_g)
 
 
 def delta_b(delta_r: float) -> float:
-    return rgb_method.convert_retardation_to_different_wavelength(k_function=k_function,
+    return rgbMethod.convert_retardation_to_different_wavelength(k_function=k_function,
                                                                   wavelength_1=l_r,
                                                                   delta_1=delta_r,
                                                                   wavelength_2=l_b)
@@ -59,20 +59,20 @@ print(f"delta_r = {delta_r_2_tilde}")
 print(f"delta_g = {delta_g_2_tilde}")
 print(f"delta_b = {delta_b_2_tilde}")
 
-measurement1 = rgb_method.MeasuredRetardationsAtOneLocation(
-    measurement_at_reference_wavelength=       rgb_method.RetardationMeasurement(wavelength=l_r, delta=delta_r_1_tilde),
-       additional_measurements=[rgb_method.RetardationMeasurement(wavelength=l_g, delta=delta_g_1_tilde),
-                                rgb_method.RetardationMeasurement(wavelength=l_b, delta=delta_b_1_tilde)],
+measurement1 = rgbMethod.MeasuredRetardationsAtOneLocation(
+    measurement_at_reference_wavelength=       rgbMethod.RetardationMeasurement(wavelength=l_r, delta=delta_r_1_tilde),
+       additional_measurements=[rgbMethod.RetardationMeasurement(wavelength=l_g, delta=delta_g_1_tilde),
+                                rgbMethod.RetardationMeasurement(wavelength=l_b, delta=delta_b_1_tilde)],
     reduced_birefringence_function=k_function)
 
-measurement2 = rgb_method.MeasuredRetardationsAtOneLocation(
-    measurement_at_reference_wavelength=        rgb_method.RetardationMeasurement(wavelength=l_r, delta=delta_r_2_tilde),
-    additional_measurements= [rgb_method.RetardationMeasurement(wavelength=l_g, delta=delta_g_2_tilde),
-                              rgb_method.RetardationMeasurement(wavelength=l_b, delta=delta_b_2_tilde)],
+measurement2 = rgbMethod.MeasuredRetardationsAtOneLocation(
+    measurement_at_reference_wavelength=        rgbMethod.RetardationMeasurement(wavelength=l_r, delta=delta_r_2_tilde),
+    additional_measurements= [rgbMethod.RetardationMeasurement(wavelength=l_g, delta=delta_g_2_tilde),
+                              rgbMethod.RetardationMeasurement(wavelength=l_b, delta=delta_b_2_tilde)],
     reduced_birefringence_function=k_function)
 
 
-multi_locations = rgb_method.MultipleNeighboringLocations(neighboring_locations=[measurement1, measurement2])
+multi_locations = rgbMethod.MultipleNeighboringLocations(neighboring_locations=[measurement1, measurement2])
 
 # Error functions 1 and 2:
 def E1(delta: float):
@@ -83,7 +83,7 @@ def E2(delta: float):
 
 # collective error function
 k_value = 0.1
-def L(deltas: list[float, float]):
+def L(deltas: list[float]):
     return multi_locations.collective_error_function_L(delta_rs=deltas, k=k_value)
 
 deltas_found = multi_locations.find_all_neighboring_delta_r(k=k_value,
@@ -101,15 +101,15 @@ res1 = [E1(x) for x in delta_r_plotting]
 res2 = [E2(x) for x in delta_r_plotting]
 res = [L([x, x + difference]) for x in delta_r_plotting]
 
-fig, (ax1, ax2, ax3) = plt.subplots(3, 1, )
+fig, (ax1, ax2) = plt.subplots(2, 1, figsize = (6,3))
 
 ax1.plot(delta_r_plotting, res1, )
 ax2.plot(delta_r_plotting, res2, )
-ax3.plot(delta_r_plotting, res, )
-# ax.plot(result1.x[0], L([result1.x[0], result1.x[1]]), 'rx', markersize=10)
-ax3.plot(deltas_found[0], L([deltas_found[0], deltas_found[1]]), 'rx', markersize=6, linewidth=4)
 
-for ax in (ax1, ax2, ax3):
+# ax.plot(result1.x[0], L([result1.x[0], result1.x[1]]), 'rx', markersize=10)
+
+
+for ax in (ax1, ax2):
     ax.grid(True)
     # ax.axvline(5*math.pi, color='black', lw=2, linestyle='dashed')
     # #
@@ -120,22 +120,24 @@ for ax in (ax1, ax2, ax3):
     ax.xaxis.set_minor_locator(plt.MultipleLocator(np.pi))
     ax.xaxis.set_major_formatter(plt.FuncFormatter(pi_axis_plotter.multiple_formatter(2)))
 
-    if ax == ax3:
-        ax.set_ylim([-0.25*math.pi, 2.25 * math.pi])
-    else:
-        ax.set_ylim([0, 1.25 * math.pi])
+
+    ax.set_ylim([0, 1.25 * math.pi])
 
     ax.yaxis.set_major_locator(plt.MultipleLocator(np.pi / 2))
     ax.yaxis.set_minor_locator(plt.MultipleLocator(np.pi / 4))
-    ax.set_xlim([0, 25 * math.pi])
+    ax.set_xlim([0, 24 * math.pi])
     ax.yaxis.set_major_formatter(plt.FuncFormatter(pi_axis_plotter.multiple_formatter(4)))
 
 ax1.set_ylabel(r'$E_1$', fontsize=12)
 ax1.set_xlabel(r'$\delta_{r1}$', fontsize=12)
 ax2.set_ylabel(r'$E_2$', fontsize=12)
 ax2.set_xlabel(r'$\delta_{r2}$', fontsize=12)
-ax3.set_ylabel(r'$L$', fontsize=12)
-ax3.set_xlabel(r'$\delta_{r1}, \delta_{r2}-\pi/2$', fontsize=12)
+
+ax1.text(-0.12, 1.1, "(a)", transform=ax1.transAxes,
+        size=12, weight='bold')
+ax2.text(-0.12, 1.1, "(b)", transform=ax2.transAxes,
+        size=12, weight='bold')
+
 
 plt.subplots_adjust(wspace=0, hspace=0.6)
 

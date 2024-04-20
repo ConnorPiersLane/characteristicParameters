@@ -59,16 +59,16 @@ print(f"delta_r = {delta_r_2_tilde}")
 print(f"delta_g = {delta_g_2_tilde}")
 print(f"delta_b = {delta_b_2_tilde}")
 
-measurement1 = rgbMethod.OneLocation(
-    lambda_delta_r=       rgbMethod.LambdaAndDelta(wavelength=l_r, delta=delta_r_1_tilde),
-       additional_lambda_deltas=[rgbMethod.LambdaAndDelta(wavelength=l_g, delta=delta_g_1_tilde),
-                                 rgbMethod.LambdaAndDelta(wavelength=l_b, delta=delta_b_1_tilde)],
+measurement1 = rgbMethod.MeasuredRetardationsAtOneLocation(
+    measurement_at_reference_wavelength=       rgbMethod.RetardationMeasurement(wavelength=l_r, delta=delta_r_1_tilde),
+       additional_measurements=[rgbMethod.RetardationMeasurement(wavelength=l_g, delta=delta_g_1_tilde),
+                                rgbMethod.RetardationMeasurement(wavelength=l_b, delta=delta_b_1_tilde)],
     reduced_birefringence_function=k_function)
 
-measurement2 = rgbMethod.OneLocation(
-    lambda_delta_r=        rgbMethod.LambdaAndDelta(wavelength=l_r, delta=delta_r_2_tilde),
-    additional_lambda_deltas= [rgbMethod.LambdaAndDelta(wavelength=l_g, delta=delta_g_2_tilde),
-                               rgbMethod.LambdaAndDelta(wavelength=l_b, delta=delta_b_2_tilde)],
+measurement2 = rgbMethod.MeasuredRetardationsAtOneLocation(
+    measurement_at_reference_wavelength=        rgbMethod.RetardationMeasurement(wavelength=l_r, delta=delta_r_2_tilde),
+    additional_measurements= [rgbMethod.RetardationMeasurement(wavelength=l_g, delta=delta_g_2_tilde),
+                              rgbMethod.RetardationMeasurement(wavelength=l_b, delta=delta_b_2_tilde)],
     reduced_birefringence_function=k_function)
 
 
@@ -92,18 +92,3 @@ deltas_found = multi_locations.find_all_neighboring_delta_r(k=k_value,
                                                             strategy="rand2exp")
 
 print(f"delta_r1 = {deltas_found[0] / math.pi}, delta_r2 = {deltas_found[1] / math.pi}")
-
-
-from figures_main_paper import pi_axis_plotter
-
-x = np.arange(20 * np.pi, 24 * np.pi, 0.05)
-y = np.arange(-2*np.pi, 2 * np.pi, 0.05)
-X, Y = np.meshgrid(x, y)
-Z = np.array([[L([xx, xx+yy]) for xx in x] for yy in y])
-
-# Plot the surface.
-from matplotlib import cm
-fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
-surf = ax.plot_surface(X, Y, Z, cmap=cm.coolwarm, antialiased=False)
-plt.savefig('Fig7.tiff', format='tiff', dpi=2000, bbox_inches='tight')
-plt.show()

@@ -7,11 +7,11 @@ from characteristicParameters.measurementProcedure import MeasurementProcedure, 
 from characteristicParameters.muellerCalculus import linearly_polarized_light, optical_equivalent_model
 
 # Settings
-stepsize = math.radians(1)
+stepsize = math.radians(45)
 # y-axis
 omegas = np.arange(0, math.pi + stepsize / 2, stepsize)
 # x-axis
-deltas = np.arange(0, 6*math.pi + stepsize / 2, stepsize)
+deltas = np.arange(0, math.pi + stepsize / 2, stepsize)
 
 # Two orientations angles for the incident linearly polarized light:
 phi_1 = 0
@@ -45,6 +45,33 @@ for delta in deltas:
 
 
 # Define a function that can be run parallel:
+def find_parameters_1(measurement: MeasurementProcedure) -> (float, float, float):
+    parameters = measurement.find_characteristic_parameters(
+        lb_delta=0, ub_delta=math.pi,
+        lb_theta=0, ub_theta=math.pi / 2,
+        lb_omega=0, ub_omega=math.pi,
+        strategy="best1bin"
+    )
+    return parameters.delta, parameters.theta, parameters.omega
+
+def find_parameters_2(measurement: MeasurementProcedure) -> (float, float, float):
+    parameters = measurement.find_characteristic_parameters(
+        lb_delta=0, ub_delta=math.pi,
+        lb_theta=0, ub_theta=math.pi,
+        lb_omega=0, ub_omega=2 * math.pi,
+        strategy="best1bin"
+    )
+    return parameters.delta, parameters.theta, parameters.omega
+
+def find_parameters_3(measurement: MeasurementProcedure) -> (float, float, float):
+    parameters = measurement.find_characteristic_parameters(
+        lb_delta=0, ub_delta=math.pi,
+        lb_theta=0, ub_theta=math.pi / 2,
+        lb_omega=0, ub_omega=math.pi,
+        strategy="rand1exp"
+    )
+    return parameters.delta, parameters.theta, parameters.omega
+
 def find_parameters_4(measurement: MeasurementProcedure) -> (float, float, float):
     parameters = measurement.find_characteristic_parameters(
         lb_delta=0, ub_delta=math.pi,
@@ -58,11 +85,27 @@ def find_parameters_4(measurement: MeasurementProcedure) -> (float, float, float
 
 if __name__ == '__main__':
     with concurrent.futures.ProcessPoolExecutor(max_workers=12) as executor:
+        pass
+        # 1
+        measured_values = list(executor.map(find_parameters_1, measurements))
+        with open("data/S_fig1_measured_values_1_new.pickle", "wb") as handle:
+            pickle.dump(measured_values, handle)
+
+
+        # 2
+        measured_values = list(executor.map(find_parameters_2, measurements))
+        with open("data/S_fig1_measured_values_2_new.pickle", "wb") as handle:
+            pickle.dump(measured_values, handle)
+
+        # 3
+        measured_values = list(executor.map(find_parameters_3, measurements))
+        with open("data/S_fig1_measured_values_3_new.pickle", "wb") as handle:
+            pickle.dump(measured_values, handle)
 
         # 4
         measured_values = list(executor.map(find_parameters_4, measurements))
-        with open("data/S_fig2_measured_new.pickle", "wb") as handle:
+        with open("../figures_supplemental/data/S_fig1_measured_values_4_new.pickle", "wb") as handle:
             pickle.dump(measured_values, handle)
 
-    with open("data/S_fig2_true_new.pickle", "wb") as handle:
+    with open("../figures_supplemental/data/S_fig1_true_values_new.pickle", "wb") as handle:
         pickle.dump(true_values, handle)
