@@ -129,7 +129,6 @@ for ax in (ax1, ax2, ax3):
     ax.spines['bottom'].set_visible(False)
     ax.spines['left'].set_visible(False)
 
-
     divider = make_axes_locatable(ax)
     cax = divider.append_axes('right', size='3%', pad=0.1)
 

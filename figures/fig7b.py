@@ -23,17 +23,28 @@ ax.set_aspect(1.0)
 ax.set_xlim([20 * np.pi, 24 * np.pi])
 ax.set_ylim([20 * np.pi, 24 * np.pi])
 
+
 ax.xaxis.set_major_locator(plt.MultipleLocator(np.pi))
-ax.xaxis.set_minor_locator(plt.MultipleLocator(np.pi / 2))
+ax.xaxis.set_minor_locator(plt.MultipleLocator(np.pi / 4))
 ax.xaxis.set_major_formatter(plt.FuncFormatter(pi_axis_plotter.multiple_formatter(2)))
 ax.yaxis.set_major_locator(plt.MultipleLocator(np.pi))
-ax.yaxis.set_minor_locator(plt.MultipleLocator(np.pi / 2))
+ax.yaxis.set_minor_locator(plt.MultipleLocator(np.pi / 4))
 ax.yaxis.set_major_formatter(plt.FuncFormatter(pi_axis_plotter.multiple_formatter(2)))
 
-ax.set_xlabel(r'$\delta_{r,1}$', fontsize=12)
-ax.set_ylabel(r'$\delta_{r,2}$', fontsize=12)
+ax.set_xlabel(r'$\delta_{r,1}$', fontsize=14)
+ax.set_ylabel(r'$\delta_{r,2}$', fontsize=14)
+ax.tick_params(axis='both', labelsize=12)
 
 ax.plot(deltas_found[0], deltas_found[1], 'rx', markersize=8, linewidth=4)
+
+linestyle = "dashed"
+linestyle = "solid"
+linewidth = 3
+ax.plot([20*math.pi,20*math.pi], [20*math.pi,24*math.pi], color="black", linestyle=linestyle, linewidth=linewidth)
+ax.plot([24*math.pi,24*math.pi], [20*math.pi,24*math.pi], color="black", linestyle=linestyle, linewidth=linewidth)
+ax.plot([20*math.pi,24*math.pi], [24*math.pi,24*math.pi], color="black", linestyle=linestyle, linewidth=linewidth)
+ax.plot([20*math.pi,24*math.pi], [20*math.pi,20*math.pi], color="black", linestyle=linestyle, linewidth=linewidth)
+
 
 cbar = fig.colorbar(CS)
 cbar.ax.set_ylabel(r'$L$', fontsize=12)
@@ -46,5 +57,5 @@ cbar.ax.set_yticklabels(['0', r'$\frac{\pi}{2}$',
 
 
 plt.tight_layout()
-plt.savefig('Fig7.tiff', format='tiff', dpi=2000, bbox_inches='tight')
+plt.savefig('Fig7b.tiff', format='tiff', dpi=2000, bbox_inches='tight')
 plt.show()

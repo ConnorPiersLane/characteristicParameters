@@ -61,7 +61,7 @@ plt.yticks(size = 12)
 ax.legend()
 
 plt.xlabel(r'$\delta_r$', fontsize=14)
-plt.ylabel(r'$\tilde{\delta}$', fontsize=14)
+plt.ylabel(r'$\tilde{\delta}_{r,g}$', fontsize=14)
 plt.legend( ncol=3, loc=(0.05, 1.02), fontsize=10)
 plt.savefig('Fig3.tiff', format='tiff', dpi=2000, bbox_inches='tight')
 
