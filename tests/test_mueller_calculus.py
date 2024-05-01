@@ -1,9 +1,9 @@
 import math
 
+import characteristicParameters
 import numpy as np
 import pytest
 
-import characteristicParameters
 
 def test_linearly_polarized_light():
     # Arrange

@@ -1,9 +1,10 @@
 import math
+
 import numpy as np
 import pytest
-
-from characteristicParameters.measurementProcedure import MeasurementProcedure, MeasuredStokesVector
 from characteristicParameters import muellerCalculus
+from characteristicParameters.measurementProcedure import MeasurementProcedure, MeasuredStokesVector
+
 
 def test_MeasuredStokesVector():
 

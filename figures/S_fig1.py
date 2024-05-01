@@ -1,13 +1,12 @@
 import math
 import os
 import pickle
+
 import matplotlib.pyplot as plt
 import numpy as np
 from PIL import Image
-
 from characteristicParameters.triangle_wave_functions import T_pi
 from matplotlib.ticker import MultipleLocator
-
 
 rc = {"font.family": "serif",
       "mathtext.fontset": "stix"}

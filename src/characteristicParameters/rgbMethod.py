@@ -2,11 +2,11 @@ import math
 import statistics
 from dataclasses import dataclass
 from typing import Callable
-import numpy as np
-from scipy import optimize
 
+import numpy as np
 from characteristicParameters import _helpers
 from characteristicParameters.triangle_wave_functions import T_pi
+from scipy import optimize
 
 """
 Important:

@@ -1,8 +1,8 @@
 import math
 
 import pytest
-
 from characteristicParameters.triangle_wave_functions import T_pi, T_pi_2
+
 
 def test_T_pi():
 

@@ -1,8 +1,10 @@
 import math
-import numpy as np
+
 import matplotlib.pyplot as plt
-import pi_axis_plotter
+import numpy as np
 from characteristicParameters.triangle_wave_functions import T_pi
+
+import pi_axis_plotter
 
 # Formatting matplotlib
 rc = {"font.family" : "serif",

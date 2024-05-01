@@ -1,9 +1,11 @@
 import math
-import numpy as np
+
 import matplotlib.pyplot as plt
-import pi_axis_plotter
-from characteristicParameters.triangle_wave_functions import T_pi
+import numpy as np
 from characteristicParameters.rgbMethod import define_reduced_birefringence_function
+from characteristicParameters.triangle_wave_functions import T_pi
+
+import pi_axis_plotter
 
 rc = {"font.family" : "serif",
       "mathtext.fontset" : "stix"}

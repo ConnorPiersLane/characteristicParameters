@@ -1,9 +1,9 @@
-import numpy as np
 import math
-import matplotlib.pyplot as plt
 
-from characteristicParameters.triangle_wave_functions import T_pi
+import matplotlib.pyplot as plt
+import numpy as np
 from characteristicParameters import rgbMethod
+from characteristicParameters.triangle_wave_functions import T_pi
 
 rc = {"font.family": "serif",
       "mathtext.fontset": "stix"}

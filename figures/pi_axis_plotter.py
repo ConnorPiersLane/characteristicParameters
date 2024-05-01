@@ -5,8 +5,9 @@ Link: https://stackoverflow.com/questions/40642061/how-to-set-axis-ticks-in-mult
 Accessed: Dec. 2023
 """
 
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
+
 
 def multiple_formatter(denominator=2, number=np.pi, latex='\pi'):
     def gcd(a, b):

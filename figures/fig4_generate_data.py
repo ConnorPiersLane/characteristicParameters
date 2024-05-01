@@ -1,8 +1,8 @@
+import concurrent.futures
 import math
 import pickle
-import numpy as np
-import concurrent.futures
 
+import numpy as np
 from characteristicParameters.measurementProcedure import MeasurementProcedure, MeasuredStokesVector
 from characteristicParameters.muellerCalculus import linearly_polarized_light, optical_equivalent_model
 

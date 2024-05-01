@@ -1,15 +1,13 @@
 import math
 import os.path
 import pickle
+
 import matplotlib.pyplot as plt
 import numpy as np
 from PIL import Image
-
-from mpl_toolkits.axes_grid1 import make_axes_locatable
-
 from characteristicParameters.triangle_wave_functions import T_pi
 from matplotlib.ticker import MultipleLocator
-
+from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 rc = {"font.family": "serif",
       "mathtext.fontset": "stix"}
