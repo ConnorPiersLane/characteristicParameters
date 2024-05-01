@@ -38,8 +38,8 @@ ax.yaxis.set_major_formatter(plt.FuncFormatter(pi_axis_plotter.multiple_formatte
 ax.set_ylim([0, math.pi])
 ax.set_xlim([0, 4 * math.pi])
 
-plt.xticks(size = 20)
-plt.yticks(size = 20)
+plt.xticks(size=20)
+plt.yticks(size=20)
 plt.xlabel(r'$\delta$', fontsize=20)
 plt.ylabel(r'$\tilde{\delta}$', fontsize=20)
 plt.legend(ncol=2, loc=(0.05, 1.02), fontsize=20)

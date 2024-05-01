@@ -11,7 +11,7 @@ stepsize = math.radians(1)
 # y-axis
 omegas = np.arange(0, math.pi + stepsize / 2, stepsize)
 # x-axis
-deltas = np.arange(0, 6*math.pi + stepsize / 2, stepsize)
+deltas = np.arange(0, 6 * math.pi + stepsize / 2, stepsize)
 
 # Two orientations angles for the incident linearly polarized light:
 phi_1 = 0
@@ -55,10 +55,8 @@ def find_parameters_4(measurement: MeasurementProcedure) -> (float, float, float
     return parameters.delta, parameters.theta, parameters.omega
 
 
-
 if __name__ == '__main__':
     with concurrent.futures.ProcessPoolExecutor(max_workers=12) as executor:
-
         # 4
         measured_values = list(executor.map(find_parameters_4, measurements))
         with open("/data/fig4_measured_values_new.pickle", "wb") as handle:

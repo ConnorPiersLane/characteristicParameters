@@ -13,8 +13,6 @@ rc = {"font.family": "serif",
 plt.rcParams.update(rc)
 plt.rcParams["font.serif"] = ["Times New Roman"] + plt.rcParams["font.serif"]
 
-
-
 delta_img_all = []
 theta_img_all = []
 omega_img_all = []
@@ -23,15 +21,13 @@ eps = np.finfo(float).eps
 
 leps = math.log10(eps)
 
-for i in (1,2,3,4):
+for i in (1, 2, 3, 4):
 
     with open(os.path.join('data', f'S_fig1_measured_values_{i}_L2norm.pickle'), 'rb') as handle:
         measured_values = pickle.load(handle)
 
     with open(os.path.join('data', 'S_fig1_true_values.pickle'), 'rb') as handle:
         true_values = pickle.load(handle)
-
-
 
     ncol = 181  # because stepsize was 1° including omega=0° and omega=180°
 
@@ -51,24 +47,25 @@ for i in (1,2,3,4):
         theta_tilde.append(measured_value[1])
         omega_tilde.append(measured_value[2])
 
-
     delta_diff = []
     theta_diff = []
     omega_diff = []
 
     for (true, fitted) in zip(delta_true, delta_tilde):
         true = T_pi(true)  # Measurement range is [0,\pi], hence we need to calculate the respective true relative value
-        Diff = abs(true-fitted)
+        Diff = abs(true - fitted)
         delta_diff.append(Diff)
 
     for (true, fitted) in zip(theta_true, theta_tilde):
-        fitted = fitted % (math.pi/2)  # Measuement range is [0,\pi/2), but fitted was within [0,\pi], hence the modulo
-        true = true % (math.pi/2)  # In order to compare only the correct relative position, do the same with the true value
-        Diff = abs(true-fitted)
+        fitted = fitted % (
+                    math.pi / 2)  # Measuement range is [0,\pi/2), but fitted was within [0,\pi], hence the modulo
+        true = true % (
+                    math.pi / 2)  # In order to compare only the correct relative position, do the same with the true value
+        Diff = abs(true - fitted)
         theta_diff.append(Diff)
 
     for (true, fitted) in zip(omega_true, omega_tilde):
-        if math.isclose(true, math.pi):  #Omega is periodic with pi, meaning 0°==180°
+        if math.isclose(true, math.pi):  # Omega is periodic with pi, meaning 0°==180°
             true = 0
         if math.isclose(fitted, math.pi):
             fitted = 0
@@ -93,32 +90,28 @@ for i in (1,2,3,4):
     theta_img = Image.fromarray(np.uint8(theta_img))
     omega_img = Image.fromarray(np.uint8(omega_img))
 
-
     delta_img_all.append(delta_img)
     theta_img_all.append(theta_img)
     omega_img_all.append(omega_img)
 
-
-
-
-fig, axes = plt.subplots(3, 4, sharex=False, figsize=(9,6))
+fig, axes = plt.subplots(3, 4, sharex=False, figsize=(9, 6))
 
 cmap = "inferno"
 
-img11 = axes[0][0].imshow(delta_img_all[0],  cmap=cmap, interpolation=None, vmin=0, vmax=255)
-img12 = axes[0][1].imshow(delta_img_all[1],  cmap=cmap, interpolation=None, vmin=0, vmax=255)
-img13 = axes[0][2].imshow(delta_img_all[2],  cmap=cmap, interpolation=None, vmin=0, vmax=255)
-img14 = axes[0][3].imshow(delta_img_all[3],  cmap=cmap, interpolation=None, vmin=0, vmax=255)
+img11 = axes[0][0].imshow(delta_img_all[0], cmap=cmap, interpolation=None, vmin=0, vmax=255)
+img12 = axes[0][1].imshow(delta_img_all[1], cmap=cmap, interpolation=None, vmin=0, vmax=255)
+img13 = axes[0][2].imshow(delta_img_all[2], cmap=cmap, interpolation=None, vmin=0, vmax=255)
+img14 = axes[0][3].imshow(delta_img_all[3], cmap=cmap, interpolation=None, vmin=0, vmax=255)
 
-img21 = axes[1][0].imshow(theta_img_all[0],  cmap=cmap, interpolation=None, vmin=0, vmax=255)
-img22 = axes[1][1].imshow(theta_img_all[1],  cmap=cmap, interpolation=None, vmin=0, vmax=255)
-img23 = axes[1][2].imshow(theta_img_all[2],  cmap=cmap, interpolation=None, vmin=0, vmax=255)
-img24 = axes[1][3].imshow(theta_img_all[3],  cmap=cmap, interpolation=None, vmin=0, vmax=255)
+img21 = axes[1][0].imshow(theta_img_all[0], cmap=cmap, interpolation=None, vmin=0, vmax=255)
+img22 = axes[1][1].imshow(theta_img_all[1], cmap=cmap, interpolation=None, vmin=0, vmax=255)
+img23 = axes[1][2].imshow(theta_img_all[2], cmap=cmap, interpolation=None, vmin=0, vmax=255)
+img24 = axes[1][3].imshow(theta_img_all[3], cmap=cmap, interpolation=None, vmin=0, vmax=255)
 
-img31 = axes[2][0].imshow(omega_img_all[0],  cmap=cmap, interpolation=None, vmin=0, vmax=255)
-img32 = axes[2][1].imshow(omega_img_all[1],  cmap=cmap, interpolation=None, vmin=0, vmax=255)
-img33 = axes[2][2].imshow(omega_img_all[2],  cmap=cmap, interpolation=None, vmin=0, vmax=255)
-img34 = axes[2][3].imshow(omega_img_all[3],  cmap=cmap, interpolation=None, vmin=0, vmax=255)
+img31 = axes[2][0].imshow(omega_img_all[0], cmap=cmap, interpolation=None, vmin=0, vmax=255)
+img32 = axes[2][1].imshow(omega_img_all[1], cmap=cmap, interpolation=None, vmin=0, vmax=255)
+img33 = axes[2][2].imshow(omega_img_all[2], cmap=cmap, interpolation=None, vmin=0, vmax=255)
+img34 = axes[2][3].imshow(omega_img_all[3], cmap=cmap, interpolation=None, vmin=0, vmax=255)
 
 for rows in axes:
     for ax in rows:
@@ -134,7 +127,6 @@ for rows in axes:
         # ax.yaxis.set_ticklabels([r"", ""], fontsize=12)
         # ax.xaxis.set_minor_locator(MultipleLocator(90))
         # ax.xaxis.set_ticklabels(["", r""])
-
 
 for rows in axes:
     rows[0].set_yticks((0, 180))
@@ -180,12 +172,9 @@ for rows in axes:
 
     i = i + 1
 
-#plt.subplots_adjust(wspace=0.05, hspace=0.05)
+# plt.subplots_adjust(wspace=0.05, hspace=0.05)
 
 plt.subplots_adjust(wspace=0.1, hspace=0.1)
 plt.savefig(f'S_Fig1.tiff', format='tiff', dpi=1000, bbox_inches='tight')
 
 plt.show()
-
-
-

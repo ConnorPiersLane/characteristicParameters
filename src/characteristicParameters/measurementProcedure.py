@@ -72,6 +72,7 @@ class MeasuredStokesVector:
     def get_S2_normalized(self):
         return self.S2 / self.S0
 
+
 class MeasurementProcedure:
 
     def __init__(self, measured_outgoing_stokes_parameters: list[MeasuredStokesVector]):
@@ -167,10 +168,12 @@ class MeasurementProcedure:
         for measurement in self.measured_stokes:
             residual_vector.append(
                 measurement.get_S1_normalized() - MeasurementProcedure.S1_in_theory(phi=measurement.phi,
-                                                                   delta=delta, theta=theta, omega=omega))
+                                                                                    delta=delta, theta=theta,
+                                                                                    omega=omega))
             residual_vector.append(
                 measurement.get_S2_normalized() - MeasurementProcedure.S2_in_theory(phi=measurement.phi,
-                                                                   delta=delta, theta=theta, omega=omega))
+                                                                                    delta=delta, theta=theta,
+                                                                                    omega=omega))
 
         return residual_vector
 
@@ -179,7 +182,6 @@ class MeasurementProcedure:
         Eq. (13) in the Paper
         """
         return np.linalg.norm(self.residual_vector_r(delta, theta, omega), ord=2)
-
 
     def find_characteristic_parameters(self,
                                        lb_delta: float = 0,

@@ -98,7 +98,7 @@ class MeasuredRetardationsAtOneLocation:
             additional_measurements = [additional_measurements]
 
         self.all_measurements: list[RetardationMeasurement] = [
-                    measurement_at_reference_wavelength] + additional_measurements
+                                                                  measurement_at_reference_wavelength] + additional_measurements
 
         self.k_function: Callable[[float], float] = reduced_birefringence_function
 
