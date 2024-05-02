@@ -1,5 +1,6 @@
 import math
 
+
 def T_pi(delta: float) -> float:
     """
     Triangle wave function with Period 2pi; Amplitude pi/2; and a y-shift of pi/2.
@@ -13,7 +14,7 @@ def T_pi(delta: float) -> float:
 
     """
 
-    return abs(((delta-math.pi) % (2*math.pi))-math.pi)
+    return abs(((delta - math.pi) % (2 * math.pi)) - math.pi)
 
 
 def T_pi_2(delta) -> float:
@@ -29,4 +30,4 @@ def T_pi_2(delta) -> float:
 
     """
 
-    return abs(((delta - math.pi/2) % (math.pi)) - math.pi/2)
+    return abs(((delta - math.pi / 2) % (math.pi)) - math.pi / 2)

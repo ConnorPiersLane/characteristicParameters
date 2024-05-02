@@ -2,11 +2,11 @@ import math
 import statistics
 from dataclasses import dataclass
 from typing import Callable
-import numpy as np
-from scipy import optimize
 
+import numpy as np
 from characteristicParameters import _helpers
 from characteristicParameters.triangle_wave_functions import T_pi
+from scipy import optimize
 
 """
 Important:
@@ -98,7 +98,7 @@ class MeasuredRetardationsAtOneLocation:
             additional_measurements = [additional_measurements]
 
         self.all_measurements: list[RetardationMeasurement] = [
-                    measurement_at_reference_wavelength] + additional_measurements
+                                                                  measurement_at_reference_wavelength] + additional_measurements
 
         self.k_function: Callable[[float], float] = reduced_birefringence_function
 

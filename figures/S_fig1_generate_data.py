@@ -1,8 +1,8 @@
+import concurrent.futures
 import math
 import pickle
-import numpy as np
-import concurrent.futures
 
+import numpy as np
 from characteristicParameters.measurementProcedure import MeasurementProcedure, MeasuredStokesVector
 from characteristicParameters.muellerCalculus import linearly_polarized_light, optical_equivalent_model
 
@@ -54,6 +54,7 @@ def find_parameters_1(measurement: MeasurementProcedure) -> (float, float, float
     )
     return parameters.delta, parameters.theta, parameters.omega
 
+
 def find_parameters_2(measurement: MeasurementProcedure) -> (float, float, float):
     parameters = measurement.find_characteristic_parameters(
         lb_delta=0, ub_delta=math.pi,
@@ -63,6 +64,7 @@ def find_parameters_2(measurement: MeasurementProcedure) -> (float, float, float
     )
     return parameters.delta, parameters.theta, parameters.omega
 
+
 def find_parameters_3(measurement: MeasurementProcedure) -> (float, float, float):
     parameters = measurement.find_characteristic_parameters(
         lb_delta=0, ub_delta=math.pi,
@@ -71,6 +73,7 @@ def find_parameters_3(measurement: MeasurementProcedure) -> (float, float, float
         strategy="rand1exp"
     )
     return parameters.delta, parameters.theta, parameters.omega
+
 
 def find_parameters_4(measurement: MeasurementProcedure) -> (float, float, float):
     parameters = measurement.find_characteristic_parameters(
@@ -82,7 +85,6 @@ def find_parameters_4(measurement: MeasurementProcedure) -> (float, float, float
     return parameters.delta, parameters.theta, parameters.omega
 
 
-
 if __name__ == '__main__':
     with concurrent.futures.ProcessPoolExecutor(max_workers=12) as executor:
         pass
@@ -90,7 +92,6 @@ if __name__ == '__main__':
         measured_values = list(executor.map(find_parameters_1, measurements))
         with open("data/S_fig1_measured_values_1_new.pickle", "wb") as handle:
             pickle.dump(measured_values, handle)
-
 
         # 2
         measured_values = list(executor.map(find_parameters_2, measurements))
