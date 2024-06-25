@@ -6,8 +6,8 @@ from scipy import optimize
 
 """
 Important:
-Most of these functions refer to the measurement procedure described in section 2.2 of my paper.
-I recommend using the paper as a reference.
+Most of these functions refer to the measurement procedure described in section 2.2 of the paper.
+It is recommended to use the paper as a reference.
 """
 
 
@@ -73,7 +73,7 @@ class MeasuredStokesVector:
         return self.S2 / self.S0
 
 
-class MeasurementProcedure:
+class OptimizationProcedure:
 
     def __init__(self, measured_outgoing_stokes_parameters: list[MeasuredStokesVector]):
         """
@@ -167,13 +167,13 @@ class MeasurementProcedure:
 
         for measurement in self.measured_stokes:
             residual_vector.append(
-                measurement.get_S1_normalized() - MeasurementProcedure.S1_in_theory(phi=measurement.phi,
-                                                                                    delta=delta, theta=theta,
-                                                                                    omega=omega))
+                measurement.get_S1_normalized() - OptimizationProcedure.S1_in_theory(phi=measurement.phi,
+                                                                                     delta=delta, theta=theta,
+                                                                                     omega=omega))
             residual_vector.append(
-                measurement.get_S2_normalized() - MeasurementProcedure.S2_in_theory(phi=measurement.phi,
-                                                                                    delta=delta, theta=theta,
-                                                                                    omega=omega))
+                measurement.get_S2_normalized() - OptimizationProcedure.S2_in_theory(phi=measurement.phi,
+                                                                                     delta=delta, theta=theta,
+                                                                                     omega=omega))
 
         return residual_vector
 
@@ -219,8 +219,8 @@ class MeasurementProcedure:
                                                  strategy=strategy)
 
         delta_tilde = result.x[0]
-        theta_tilde = MeasurementProcedure.convert_theta_to_specified_range(result.x[1])
-        omega_tilde = MeasurementProcedure.convert_omega_to_specified_range(result.x[2])
+        theta_tilde = OptimizationProcedure.convert_theta_to_specified_range(result.x[1])
+        omega_tilde = OptimizationProcedure.convert_omega_to_specified_range(result.x[2])
 
         return MeasuredCharacteristicParameters(delta=delta_tilde,
                                                 theta=theta_tilde,

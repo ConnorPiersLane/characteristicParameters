@@ -3,7 +3,7 @@ import math
 import pickle
 
 import numpy as np
-from characteristicParameters.measurementProcedure import MeasurementProcedure, MeasuredStokesVector
+from characteristicParameters.optimizationProcedure import OptimizationProcedure, MeasuredStokesVector
 from characteristicParameters.muellerCalculus import linearly_polarized_light, optical_equivalent_model
 
 # Settings
@@ -19,7 +19,7 @@ phi_2 = math.radians(45)
 
 # Store the values here:
 true_values = []  # true characteristic values
-measurements: list[MeasurementProcedure] = []  # measured Stokes parameters
+measurements: list[OptimizationProcedure] = []  # measured Stokes parameters
 measured_values = []  # measured characteristic values
 
 for delta in deltas:
@@ -41,11 +41,11 @@ for delta in deltas:
                                                stokes_vector=S_out_phi1)
         OutgoingStokes2 = MeasuredStokesVector(phi=phi_2,
                                                stokes_vector=S_out_phi2)
-        measurements.append(MeasurementProcedure([OutgoingStokes1, OutgoingStokes2]))
+        measurements.append(OptimizationProcedure([OutgoingStokes1, OutgoingStokes2]))
 
 
 # Define a function that can be run parallel:
-def find_parameters_4(measurement: MeasurementProcedure) -> (float, float, float):
+def find_parameters_4(measurement: OptimizationProcedure) -> (float, float, float):
     parameters = measurement.find_characteristic_parameters(
         lb_delta=0, ub_delta=math.pi,
         lb_theta=0, ub_theta=math.pi,
