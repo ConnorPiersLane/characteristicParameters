@@ -20,8 +20,9 @@ Z1 = std_errors[0]
 Z2 = std_errors[1]
 Z3 = std_errors[2]
 
-Z2 = [math.degrees(x) for x in y for y ]
-
+Z1_deg = [[math.degrees(x) for x in y] for y in Z1]
+Z2_deg = [[math.degrees(x) for x in y] for y in Z2]
+Z3_deg = [[math.degrees(x) for x in y] for y in Z3]
 
 # Chose a fixed theta
 theta = math.radians(125)
@@ -44,13 +45,14 @@ X = deltas
 
 fig, (ax1, ax2, ax3) = plt.subplots(3, 1, sharex=False, constrained_layout=True)
 
-cmap = "inferno_r"
+cmap = "YlOrRd"
 # cmap = ListedColormap([ "whitesmoke", "grey", "black", "red"])
 levels1 = [0.0, 0.005, 0.01, 0.015, 0.02, 0.025, 0.03]
-CS1 = ax1.contourf(X, Y, Z1, cmap="viridis_r", levels=levels1,)
-levels2 = [0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5]
-CS2 = ax2.contourf(X, Y, Z2, cmap=cmap,levels=levels2,)
-CS3 = ax3.contourf(X, Y, Z3, cmap=cmap,levels=levels2, extend="max")
+levels1 = [0.0, 0.25, 0.5, 0.75, 1, 1.25, 1.5]
+CS1 = ax1.contourf(X, Y, Z1_deg, cmap="YlGn", levels=levels1,)
+levels2 = np.arange(start=0, stop=10.5, step=1)
+CS2 = ax2.contourf(X, Y, Z2_deg, cmap=cmap,levels=levels2, extend="max")
+CS3 = ax3.contourf(X, Y, Z3_deg, cmap=cmap,levels=levels2, extend="max")
 
 i = 1
 for ax in (ax1, ax2, ax3):
@@ -77,18 +79,18 @@ for ax in (ax1, ax2, ax3):
 
     if i == 1:
 
-        cbar = fig.colorbar(CS1, cax=cax, orientation='vertical', ticks=[0, 0.01, 0.02, 0.03])
-        cbar.set_label(r"$\Delta \delta$", fontsize=12)
+        cbar = fig.colorbar(CS1, cax=cax, orientation='vertical', ticks=[0, 0.5, 1, 1.5])
+        cbar.set_label(r"$\Delta \delta $ [°]", fontsize=12)
         ax.text(-0.12, 1.1, "(a)", transform=ax.transAxes,
                 size=12, weight='bold')
     elif i == 2:
-        cbar = fig.colorbar(CS2, cax=cax, orientation='vertical', ticks=[0, 0.1, 0.2, 0.3, 0.4, 0.5])
-        cbar.set_label(r"$\Delta \theta$", fontsize=12)
+        cbar = fig.colorbar(CS2, cax=cax, orientation='vertical', ticks=[0, 5, 10])
+        cbar.set_label(r"$\Delta \theta $ [°]", fontsize=12)
         ax.text(-0.12, 1.1, "(b)", transform=ax.transAxes,
                 size=12, weight='bold')
     elif i == 3:
-        cbar = fig.colorbar(CS3, cax=cax, orientation='vertical', ticks=[0, 0.1, 0.2, 0.3, 0.4, 0.5], extend="max")
-        cbar.set_label(r"$\Delta \omega$", fontsize=12)
+        cbar = fig.colorbar(CS3, cax=cax, orientation='vertical', ticks=[0, 5, 10], extend="max")
+        cbar.set_label(r"$\Delta \omega$ [°]", fontsize=12)
         ax.text(-0.12, 1.1, "(c)", transform=ax.transAxes,
                 size=12, weight='bold')
 

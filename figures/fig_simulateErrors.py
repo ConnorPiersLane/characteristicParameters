@@ -6,6 +6,7 @@ import numpy as np
 from characteristicParameters.analyticFormulas import char_paras_to_stokes, stokes_to_char_paras_phi_0_and_45, \
     eff_diff_theta, eff_diff_omega
 from characteristicParameters.muellerCalculus import linearly_polarized_light
+from characteristicParameters.triangle_wave_functions import T_pi
 
 # Help functions to calculate the difference between guessed and true
 
@@ -14,7 +15,7 @@ from characteristicParameters.muellerCalculus import linearly_polarized_light
 """ Settings """
 # Chose a fixed theta
 theta = math.radians(125)
-theta_expected = theta % math.pi/2
+theta_expected = theta % (math.pi/2)
 
 # Error analyis
 # N times the corresponding characteristic parameters are calculated
@@ -30,9 +31,9 @@ omegas = np.arange(0, math.pi + stepsize / 2, stepsize)
 deltas = np.arange(0, 4 * math.pi + stepsize / 2, stepsize)
 
 # The variances of the guessed results are stored here
-var_delta = [[None] * len(deltas)] * len(omegas)
-var_theta = [[None] * len(deltas)] * len(omegas)
-var_omega = [[None] * len(deltas)] * len(omegas)
+std_delta = [[None] * len(deltas)] * len(omegas)
+std_theta = [[None] * len(deltas)] * len(omegas)
+std_omega = [[None] * len(deltas)] * len(omegas)
 
 for o in range(len(omegas)):
     print(f"{o}/{len(omegas)-1}")
@@ -59,15 +60,15 @@ for o in range(len(omegas)):
         theta_guesses = [char_pars[1] for char_pars in char_pars_guessed]
         omega_guesses = [char_pars[2] for char_pars in char_pars_guessed]
 
-        delta_errors = [guess - delta for guess in delta_guesses]
+        delta_errors = [guess - T_pi(delta) for guess in delta_guesses]
         theta_errors = [eff_diff_theta(theta_measured=guess, theta_expected=theta_expected) for guess in theta_guesses]
         omega_errors = [eff_diff_omega(omega_measured=guess, omega_expected=omega) for guess in omega_guesses]
 
-        var_delta[o][d] = np.std(delta_errors)
-        var_theta[o][d] = np.std(theta_errors)
-        var_omega[o][d] = np.std(omega_errors)
+        std_delta[o][d] = np.std(delta_errors)
+        std_theta[o][d] = np.std(theta_errors)
+        std_omega[o][d] = np.std(omega_errors)
 
-std_errors = (var_delta, var_theta, var_omega)
+std_errors = (std_delta, std_theta, std_omega)
 with open(r"fig4_std_errors.pickle", "wb") as handle:
     pickle.dump(std_errors, handle)
 

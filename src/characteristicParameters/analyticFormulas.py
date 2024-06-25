@@ -7,10 +7,18 @@ from characteristicParameters.muellerCalculus import optical_equivalent_model
 
 
 def eff_diff_with_shift(measured, true, shift):
-    diff1 = abs(measured - true)
-    diff2 = abs(measured+shift - true)
-    diff3 = abs(measured - (true+shift))
-    return min(diff1, diff2, diff3)
+    diff1 = true - measured
+    diff2 = true - (measured+shift)
+    diff3 = (true+shift) - measured
+
+    if abs(diff1) == min(abs(diff1), abs(diff2), abs(diff3)):
+        return diff1
+    elif abs(diff2) == min(abs(diff1), abs(diff2), abs(diff3)):
+        return diff2
+    elif abs(diff3) == min(abs(diff1), abs(diff2), abs(diff3)):
+        return diff3
+    else:
+        raise CodingError("Failed to find the minimum deviation.")
 
 def eff_diff_omega(omega_measured: float, omega_expected: float) -> float:
     return eff_diff_with_shift(measured=omega_measured,
