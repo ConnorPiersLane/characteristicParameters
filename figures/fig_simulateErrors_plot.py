@@ -7,7 +7,7 @@ from matplotlib import pyplot as plt
 from matplotlib.ticker import MultipleLocator
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
-with open(os.path.join('fig4_std_errors.pickle'), 'rb') as handle:
+with open(os.path.join('fig4_mean_abs_errors.pickle'), 'rb') as handle:
     std_errors = pickle.load(handle)
 
 rc = {"font.family": "serif",
@@ -30,8 +30,7 @@ theta_expected = theta % math.pi/2
 
 # Error analyis
 # N times the corresponding characteristic parameters are calculated
-N = 1000
-error_std = 1e-3  # mean and standard deviation
+
 
 # Settings
 stepsize = math.radians(1)
@@ -47,9 +46,8 @@ fig, (ax1, ax2, ax3) = plt.subplots(3, 1, sharex=False, constrained_layout=True)
 
 cmap = "YlOrRd"
 # cmap = ListedColormap([ "whitesmoke", "grey", "black", "red"])
-levels1 = [0.0, 0.005, 0.01, 0.015, 0.02, 0.025, 0.03]
 levels1 = [0.0, 0.25, 0.5, 0.75, 1, 1.25, 1.5]
-CS1 = ax1.contourf(X, Y, Z1_deg, cmap="YlGn", levels=levels1,)
+CS1 = ax1.contourf(X, Y, Z1_deg, cmap="YlGn", levels=levels1)
 levels2 = np.arange(start=0, stop=10.5, step=1)
 CS2 = ax2.contourf(X, Y, Z2_deg, cmap=cmap,levels=levels2, extend="max")
 CS3 = ax3.contourf(X, Y, Z3_deg, cmap=cmap,levels=levels2, extend="max")
@@ -80,17 +78,17 @@ for ax in (ax1, ax2, ax3):
     if i == 1:
 
         cbar = fig.colorbar(CS1, cax=cax, orientation='vertical', ticks=[0, 0.5, 1, 1.5])
-        cbar.set_label(r"$\Delta \delta $ [°]", fontsize=12)
+        cbar.set_label(r"E($\Delta \delta $) [°]", fontsize=12)
         ax.text(-0.12, 1.1, "(a)", transform=ax.transAxes,
                 size=12, weight='bold')
     elif i == 2:
         cbar = fig.colorbar(CS2, cax=cax, orientation='vertical', ticks=[0, 5, 10])
-        cbar.set_label(r"$\Delta \theta $ [°]", fontsize=12)
+        cbar.set_label(r"E($\Delta \theta $) [°]", fontsize=12)
         ax.text(-0.12, 1.1, "(b)", transform=ax.transAxes,
                 size=12, weight='bold')
     elif i == 3:
         cbar = fig.colorbar(CS3, cax=cax, orientation='vertical', ticks=[0, 5, 10], extend="max")
-        cbar.set_label(r"$\Delta \omega$ [°]", fontsize=12)
+        cbar.set_label(r"E($\Delta \omega$) [°]", fontsize=12)
         ax.text(-0.12, 1.1, "(c)", transform=ax.transAxes,
                 size=12, weight='bold')
 

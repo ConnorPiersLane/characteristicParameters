@@ -30,7 +30,7 @@ def eff_diff_theta(theta_measured: float, theta_expected: float) -> float:
                                true=theta_expected,
                                shift=math.pi/2)
 
-def shift_omega_to_specified_range(omega: float) -> float:
+def shift_omega_to_0_pi(omega: float) -> float:
     """
 
     Args:
@@ -41,7 +41,7 @@ def shift_omega_to_specified_range(omega: float) -> float:
     """
     return omega % math.pi
 
-def shift_theta_to_specified_range(theta: float) -> float:
+def shift_theta_to_0_pi_2(theta: float) -> float:
     """
 
     Args:
@@ -54,8 +54,8 @@ def shift_theta_to_specified_range(theta: float) -> float:
 
 
 def char_paras_to_stokes(
-        delta: float, theta: float, omega: float, stokes_in: list | np.ndarray | tuple
-    ) -> list[float, float, float, float]:
+        delta: float, theta: float, omega: float, stokes_in
+    ):
     """
     
     Args:
@@ -91,28 +91,13 @@ def stokes_to_char_paras_phi_0_and_45(
     S1_45 = stokes_45_deg[1] / stokes_45_deg[0]
     S2_45 = stokes_45_deg[2] / stokes_45_deg[0]
 
-    omega = 0.5 * math.atan2(S2_0-S1_45, S1_0+S2_45)
-    theta = omega / 2 - 0.25 * math.atan2(-S1_45-S2_0, S1_0-S2_45)
+    Sigma_1 = S1_0 + S2_45
+    Sigma_2 = -S1_45 + S2_0
+    Sigma_3 = S1_0 - S2_45
+    Sigma_4 = -S1_45 - S2_0
 
-    # Calculate the denominators for each Equation
-    den_S1_0 = math.cos(2 * omega) - math.cos(2 * omega - 4 * theta)
-    den_S2_0 = math.sin(2 * omega) + math.sin(2 * omega - 4 * theta)
-    den_S1_45 = math.sin(2 * omega) - math.sin(2 * omega - 4 * theta)
-    den_S2_45 = math.cos(2 * omega) + math.cos(2 * omega - 4 * theta)
-
-    # Chose the denominator which is most far from zero
-    den_max = max(abs(den_S1_0), abs(den_S2_0), abs(den_S1_45), abs(den_S2_45))
-
-    if den_max == abs(den_S1_0):
-        cos_delta = ((2 * S1_0 - math.cos(2*omega) - math.cos(2 * omega - 4 * theta)) / den_S1_0)
-    elif den_max == abs(den_S2_0):
-        cos_delta = ((2 * S2_0 - math.sin(2*omega) + math.sin(2 * omega - 4 * theta)) / den_S2_0)
-    elif den_max == abs(den_S1_45):
-        cos_delta = ((- 2 * S1_45 - math.sin(2 * omega) - math.sin(2 * omega - 4 * theta)) / den_S1_45)
-    elif den_max == abs(den_S2_45):
-        cos_delta = ((2 * S2_45 - math.cos(2*omega) + math.cos(2 * omega - 4 * theta)) / den_S2_45)
-    else:
-        raise CodingError("Failed to find the maximum denominator.")
+    # Calculate delta
+    cos_delta = 0.25*(Sigma_1**2 + Sigma_2**2 - Sigma_3**2 - Sigma_4**2)
 
     # Measurement errors can lead to cos_delta>1 or cos_delta<-1
     if cos_delta>1: cos_delta=1
@@ -120,4 +105,11 @@ def stokes_to_char_paras_phi_0_and_45(
 
     delta = math.acos(cos_delta)
 
-    return delta, shift_theta_to_specified_range(theta), shift_omega_to_specified_range(omega)
+    # Calculate omega
+    omega = 0.5 * math.atan2(Sigma_2, Sigma_1)
+
+    # Calculate theta
+    theta = 0.25 * math.atan2(Sigma_2*Sigma_3-Sigma_1*Sigma_4, Sigma_1*Sigma_3+Sigma_2*Sigma_4)
+
+
+    return delta, theta, omega

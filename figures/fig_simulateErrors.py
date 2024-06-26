@@ -4,7 +4,7 @@ import pickle
 import numpy as np
 
 from characteristicParameters.analyticFormulas import char_paras_to_stokes, stokes_to_char_paras_phi_0_and_45, \
-    eff_diff_theta, eff_diff_omega
+    eff_diff_theta, eff_diff_omega, shift_theta_to_0_pi_2, shift_omega_to_0_pi
 from characteristicParameters.muellerCalculus import linearly_polarized_light
 from characteristicParameters.triangle_wave_functions import T_pi
 
@@ -31,9 +31,9 @@ omegas = np.arange(0, math.pi + stepsize / 2, stepsize)
 deltas = np.arange(0, 4 * math.pi + stepsize / 2, stepsize)
 
 # The variances of the guessed results are stored here
-std_delta = [[None] * len(deltas)] * len(omegas)
-std_theta = [[None] * len(deltas)] * len(omegas)
-std_omega = [[None] * len(deltas)] * len(omegas)
+mean_abs_error_delta = [[None] * len(deltas)] * len(omegas)
+mean_abs_error_theta = [[None] * len(deltas)] * len(omegas)
+mean_abs_error_omega = [[None] * len(deltas)] * len(omegas)
 
 for o in range(len(omegas)):
     print(f"{o}/{len(omegas)-1}")
@@ -57,19 +57,19 @@ for o in range(len(omegas)):
 
 
         delta_guesses = [char_pars[0] for char_pars in char_pars_guessed]
-        theta_guesses = [char_pars[1] for char_pars in char_pars_guessed]
-        omega_guesses = [char_pars[2] for char_pars in char_pars_guessed]
+        theta_guesses = [shift_theta_to_0_pi_2(char_pars[1]) for char_pars in char_pars_guessed]
+        omega_guesses = [shift_omega_to_0_pi(char_pars[2]) for char_pars in char_pars_guessed]
 
-        delta_errors = [guess - T_pi(delta) for guess in delta_guesses]
-        theta_errors = [eff_diff_theta(theta_measured=guess, theta_expected=theta_expected) for guess in theta_guesses]
-        omega_errors = [eff_diff_omega(omega_measured=guess, omega_expected=omega) for guess in omega_guesses]
+        delta_errors = np.array([guess - T_pi(delta) for guess in delta_guesses])
+        theta_errors = np.array([eff_diff_theta(theta_measured=guess, theta_expected=theta_expected) for guess in theta_guesses])
+        omega_errors = np.array([eff_diff_omega(omega_measured=guess, omega_expected=omega) for guess in omega_guesses])
 
-        std_delta[o][d] = np.std(delta_errors)
-        std_theta[o][d] = np.std(theta_errors)
-        std_omega[o][d] = np.std(omega_errors)
+        mean_abs_error_delta[o][d] = np.mean(np.abs(delta_errors))
+        mean_abs_error_theta[o][d] = np.mean(np.abs(theta_errors))
+        mean_abs_error_omega[o][d] = np.mean(np.abs(omega_errors))
 
-std_errors = (std_delta, std_theta, std_omega)
-with open(r"fig4_std_errors.pickle", "wb") as handle:
+std_errors = (mean_abs_error_delta, mean_abs_error_theta, mean_abs_error_omega)
+with open(r"fig4_mean_abs_errors.pickle", "wb") as handle:
     pickle.dump(std_errors, handle)
 
 
