@@ -78,19 +78,19 @@ for ax in (ax1, ax2, ax3):
     if i == 1:
 
         cbar = fig.colorbar(CS1, cax=cax, orientation='vertical', ticks=[0, 0.5, 1, 1.5])
-        cbar.set_label(r"E($\Delta \delta $) [°]", fontsize=12)
+        cbar.set_label(r"$MAE_{\tilde{\delta}}$ [°]", fontsize=12)
         ax.text(-0.12, 1.1, "(a)", transform=ax.transAxes,
-                size=12, weight='bold')
+                size=14, weight='bold')
     elif i == 2:
         cbar = fig.colorbar(CS2, cax=cax, orientation='vertical', ticks=[0, 5, 10])
-        cbar.set_label(r"E($\Delta \theta $) [°]", fontsize=12)
+        cbar.set_label(r"$MAE_{\tilde{\theta}}$ [°]", fontsize=12)
         ax.text(-0.12, 1.1, "(b)", transform=ax.transAxes,
-                size=12, weight='bold')
+                size=14, weight='bold')
     elif i == 3:
         cbar = fig.colorbar(CS3, cax=cax, orientation='vertical', ticks=[0, 5, 10], extend="max")
-        cbar.set_label(r"E($\Delta \omega$) [°]", fontsize=12)
+        cbar.set_label(r"$MAE_{\tilde{\omega}}$ [°]", fontsize=12)
         ax.text(-0.12, 1.1, "(c)", transform=ax.transAxes,
-                size=12, weight='bold')
+                size=14, weight='bold')
 
 
 
@@ -98,5 +98,5 @@ for ax in (ax1, ax2, ax3):
 
 ax3.set_xlabel(r"$\delta$", fontsize=12)
 
-plt.savefig('Fig4.tiff', format='tiff', dpi=2000, bbox_inches='tight')
+plt.savefig('Fig4.tiff', format='tiff', dpi=1200, bbox_inches='tight')
 plt.show()

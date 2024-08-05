@@ -102,6 +102,6 @@ ax1.legend()
 ax1.legend(ncol=3, loc=(0.05, 1.3), fontsize=10)
 
 plt.subplots_adjust(wspace=0, hspace=0)
-plt.savefig('Fig5.tiff', format='tiff', dpi=2000, bbox_inches='tight')
+plt.savefig('Fig5.tiff', format='tiff', dpi=1000, bbox_inches='tight')
 
 plt.show()
