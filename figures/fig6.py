@@ -144,5 +144,5 @@ ax2.text(-0.12, 1.1, "(b)", transform=ax2.transAxes,
 
 plt.subplots_adjust(wspace=0, hspace=0.6)
 
-plt.savefig('Fig6.tiff', format='tiff', dpi=2000, bbox_inches='tight')
+plt.savefig('Fig6.tiff', format='tiff', dpi=1000, bbox_inches='tight')
 plt.show()

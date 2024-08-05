@@ -3,7 +3,7 @@ import math
 import numpy as np
 import pytest
 from characteristicParameters import muellerCalculus
-from characteristicParameters.measurementProcedure import MeasurementProcedure, MeasuredStokesVector
+from characteristicParameters.optimizationProcedure import OptimizationProcedure, MeasuredStokesVector
 
 
 def test_MeasuredStokesVector():
@@ -31,7 +31,7 @@ def test_S1_in_theory():
     omega = math.pi / 4
     phi = 0
     theta = 0
-    assert pytest.approx(0) == MeasurementProcedure.S1_in_theory(phi=phi, delta=delta, theta=theta, omega=omega)
+    assert pytest.approx(0) == OptimizationProcedure.S1_in_theory(phi=phi, delta=delta, theta=theta, omega=omega)
 
 
 def test_S2_in_theory():
@@ -40,7 +40,7 @@ def test_S2_in_theory():
     omega = math.pi / 4
     phi = 0
     theta = 0
-    assert pytest.approx(0) == MeasurementProcedure.S2_in_theory(phi=phi, delta=delta, theta=theta, omega=omega)
+    assert pytest.approx(0) == OptimizationProcedure.S2_in_theory(phi=phi, delta=delta, theta=theta, omega=omega)
 
 
 def test_comparison_with_Mueller_matrices():
@@ -59,20 +59,20 @@ def test_comparison_with_Mueller_matrices():
     S_out_expected = optical_equivalent_model @ S_in
 
     # Act and Assert: Compare
-    assert pytest.approx(S_out_expected[1]) == MeasurementProcedure.S1_in_theory(phi=phi, delta=delta, theta=theta,
-                                                                                 omega=omega)
-    assert pytest.approx(S_out_expected[2]) == MeasurementProcedure.S2_in_theory(phi=phi, delta=delta, theta=theta,
-                                                                                 omega=omega)
+    assert pytest.approx(S_out_expected[1]) == OptimizationProcedure.S1_in_theory(phi=phi, delta=delta, theta=theta,
+                                                                                  omega=omega)
+    assert pytest.approx(S_out_expected[2]) == OptimizationProcedure.S2_in_theory(phi=phi, delta=delta, theta=theta,
+                                                                                  omega=omega)
 
 
 def test_convert_theta_to_specified_range():
-    assert pytest.approx(0) == MeasurementProcedure.convert_theta_to_specified_range(math.pi / 2)
-    assert pytest.approx(math.pi / 4) == MeasurementProcedure.convert_theta_to_specified_range(3 * math.pi / 4)
+    assert pytest.approx(0) == OptimizationProcedure.convert_theta_to_specified_range(math.pi / 2)
+    assert pytest.approx(math.pi / 4) == OptimizationProcedure.convert_theta_to_specified_range(3 * math.pi / 4)
 
 
 def test_convert_omega_to_specified_range():
-    assert pytest.approx(math.pi / 2) == MeasurementProcedure.convert_omega_to_specified_range(5 * math.pi / 2)
-    assert pytest.approx(0) == MeasurementProcedure.convert_omega_to_specified_range(3 * math.pi)
+    assert pytest.approx(math.pi / 2) == OptimizationProcedure.convert_omega_to_specified_range(5 * math.pi / 2)
+    assert pytest.approx(0) == OptimizationProcedure.convert_omega_to_specified_range(3 * math.pi)
 
 
 def test_residual_vector_r_and_residual_function_R():
@@ -106,7 +106,7 @@ def test_residual_vector_r_and_residual_function_R():
                                            stokes_vector=S_out_phi2)
 
     # Initialized the class
-    mp = MeasurementProcedure([OutgoingStokes1, OutgoingStokes2])
+    mp = OptimizationProcedure([OutgoingStokes1, OutgoingStokes2])
 
     # The residuals (as function of the parameters) should be zero when we enter the "true" parameters
     assert pytest.approx([0, 0, 0, 0]) == mp.residual_vector_r(delta=delta, theta=theta, omega=omega)
