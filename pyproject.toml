@@ -11,6 +11,10 @@ authors = [
 description = "Methods to determine the characterisitc parameters of an optically equivalent model based on measured Stokes parameters"
 readme = "README.md"
 requires-python = ">=3.11"
+dependencies = [
+    "numpy",
+    "scipy",
+]
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",

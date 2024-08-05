@@ -1,3 +1,5 @@
+import numpy as np
+
 from fig6_fig7_data import *
 
 from figures import pi_axis_plotter
